@@ -22,16 +22,7 @@ class Aplicacion:
     def salir():
         '''Cierra la aplicación'''
         Vista.limpiar_pantalla()
-        Vista.cerrar_aplicacion()
-        opcion_menu = Vista.leer_numero("Opcion: ", 0, 1)
-        if opcion_menu == 0:
-            return
-        elif opcion_menu == 1:
-            Vista.final()
-            Vista.limpiar_pantalla()
-            exit()
-
-
+        Vista.cerrar_aplicacion()        
 class Menu:
     @staticmethod
     def menu_principal(datos):
@@ -39,10 +30,11 @@ class Menu:
         while(True):
             # datos[0] = ordenes
             # datos[1] = clientes
-            # datos[2] = comprobantes
-            # datos[3] = articulos
-            # datos[4] = farmacia
-            Vista.limpiar_pantalla()
+            # datos[2] = empleados
+            # datos[3] = comprobantes
+            # datos[4] = articulos
+            # datos[5] = farmacia
+            # TODO descomentar Vista.limpiar_pantalla()
             opcion_menu = Vista.menu_principal()
             if opcion_menu == 0:
                 Aplicacion.salir()
@@ -53,13 +45,13 @@ class Menu:
             elif opcion_menu == 3:
                 pass
             elif opcion_menu == 4:
-                pass
+                datos[5].listar_articulos()
             else:
                 Vista.error_menu()
                 Vista.pausa()
 
             Controlador.guardar_nuevos_datos(
-                datos[0], datos[1], datos[2], datos[3])
+                datos[0], datos[1], datos[3], datos[4])
 
 
 if __name__ == '__main__':

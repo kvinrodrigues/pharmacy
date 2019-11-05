@@ -28,9 +28,7 @@ def test_menu_principal():
 # Controlador
 # TODO agregar tambien los demas datos necesarios
 def test_guardar_nuevo_dato():
-    list_articulos = [Articulo('0000', 'Queso'), Articulo('0001', 'Chocolate'), 
-                    Articulo('0002', 'Papa'), Articulo('0003', 'Gaseosa')]
-
+    list_articulos = [Medicamento('0000', 'Omeprazol')]
     controlador.guardar_nuevos_datos(None, None, None, list_articulos)
     
 # Modelo       
@@ -50,11 +48,12 @@ if __name__ == "__main__":
     logging.debug('Se limpio la pantalla...')
 
     logging.debug('Ejecutando pruebas de la aplicacion')
-    test_success_input_number()
-    test_success_input_string()
-    test_menu_principal()
+    # test_success_input_number()
+    # test_success_input_string()
+    # test_menu_principal()
     test_guardar_nuevo_dato()
     test_buscar_dato()
 
     logging.info("Everything passed")
     test_exit()
+    
