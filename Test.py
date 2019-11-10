@@ -28,7 +28,9 @@ def test_menu_principal():
 # Controlador
 # TODO agregar tambien los demas datos necesarios
 def test_guardar_nuevo_dato():
-    list_articulos = [Medicamento('0000', 'Omeprazol')]
+    list_articulos = [Medicamento('0000', 'Omeprazol'), Medicamento('0001', 'Supradyn'), 
+    Belleza('0003','Shampu'), Belleza('0004', 'Colageno'), Higiene('0005', 'Jabon'), 
+    Higiene('0006', 'Pasta Dental')]
     controlador.guardar_nuevos_datos(None, None, None, list_articulos)
     
 # Modelo       

@@ -8,50 +8,44 @@ from controlador import *
 from clases import *
 from vista import *
 
-
 class Aplicacion:
     '''Clase destinada a la ejecucion de la aplicacion'''
 
     @staticmethod
     def main():
         '''Punto de inicio del programa'''
-        datos = Controlador.inicializar()
-        Menu.menu_principal(datos)
+        Controlador.inicializar()
+        Menu.menu_principal()
 
     @staticmethod
     def salir():
         '''Cierra la aplicación'''
         Vista.limpiar_pantalla()
-        Vista.cerrar_aplicacion()        
+        Vista.cerrar_aplicacion()
+
 class Menu:
     @staticmethod
-    def menu_principal(datos):
+    def menu_principal():
         ''' Metodo que contiene la parte funcional del menu principal de la aplicación '''
+        vista = Vista()
+        # TODO poner cada opcion disponible en un diccionario que contenga una tupla (titulo, accion)
         while(True):
-            # datos[0] = ordenes
-            # datos[1] = clientes
-            # datos[2] = empleados
-            # datos[3] = comprobantes
-            # datos[4] = articulos
-            # datos[5] = farmacia
-            # TODO descomentar Vista.limpiar_pantalla()
             opcion_menu = Vista.menu_principal()
             if opcion_menu == 0:
                 Aplicacion.salir()
             elif opcion_menu == 1:
-                pass
+                Vista.realizar_pedido()
             elif opcion_menu == 2:
                 pass
             elif opcion_menu == 3:
                 pass
             elif opcion_menu == 4:
-                datos[5].listar_articulos()
+                vista.desplegar_articulos()
             else:
                 Vista.error_menu()
                 Vista.pausa()
 
-            Controlador.guardar_nuevos_datos(
-                datos[0], datos[1], datos[3], datos[4])
+            Controlador.guardar_nuevos_datos(Controlador.farmacia)
 
 
 if __name__ == '__main__':

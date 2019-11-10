@@ -6,7 +6,6 @@ Sistema de Pedidos de Farmacias
 
 import abc
 from abc import *
-from vista import *
 import constants
 # Abstract
 
@@ -31,11 +30,15 @@ class Articulo(Vendible):
         self.codigo = codigo
         self.descripcion = descripcion
 
+    def __str__(self):
+        return self.codigo + " " + self.descripcion
+
 
 class Medicamento(Articulo):
     # TODO implementar
     def vender(self):
-        return super().vender()    
+        return super().vender()
+
 
 class Belleza(Articulo):
     def vender(self):
@@ -59,36 +62,32 @@ class Farmacia(Empresa):
         self.comprobantes = []
 
     def obtener_articulos(self):
-        ''' Implementacion del metodo de la operacion del listado de articulos '''
+        ''' Implementacion del metodo de la operacion de obtencion de articulos organizados en categoria '''
         articulo_categorizado = {
-            constants.tipo_medicamento: [], constants.tipo_higiente: [], constants.tipo_belleza: []}
+            constants.tipo_medicamento[0]: [], constants.tipo_higiene[0]: [], constants.tipo_belleza[0]: []}
         for articulo in self.articulos:
             if isinstance(articulo, Medicamento):
-                articulo_categorizado[constants.tipo_medicamento].append(
+                articulo_categorizado[constants.tipo_medicamento[0]].append(
                     articulo)
             elif isinstance(articulo, Higiene):
-                articulo_categorizado[constants.tipo_higiente].append(articulo)
+                articulo_categorizado[constants.tipo_higiene[0]].append(
+                    articulo)
             elif isinstance(articulo, Belleza):
-                articulo_categorizado[constants.tipo_belleza].append(articulo)
+                articulo_categorizado[constants.tipo_belleza[0]].append(
+                    articulo)
 
         return articulo_categorizado
 
-    def listar_articulos(self):
-        '''Metodo para listar los articulos existentes'''
-        articulos_categorizados = self.obtener_articulos()
-        Vista.listar_articulos(articulos_categorizados)
-
-    def realizar_pedido(self):
-        pass
+    def realizar_pedido(self, articulos):
+        orden = Orden(articulos)
+        self.ordenes.append(orden)
+        return orden   
 
     def obtener_comprobante(self, numero_orden):
         pass
 
     def obtener_reporte(self):
         pass
-
-# TODO implementar correctamente esta abstraccion
-
 
 class Contacto():
     @abstractmethod
@@ -136,15 +135,23 @@ class Documento:
 
 
 class Orden(Documento):
-    def __init__(self, numero_orden, articulos, *args):
-        super().__init__(args)
-        self.numero_orden = numero_orden
-        self.articulos = articulos
+    numero_orden = 0
+    numero_documento = 0
+    descripcion = 'Pedido' # TODO debe ser una constante
+    def __init__(self, articulos, *args):
+        super().__init__(self.numero_documento, self.descripcion)
+        Orden.numero_orden += 1
+        self._articulos = articulos
 
     # TODO agregar solamente si es de tipo articulo
     def agregar_articulo(self, articulo):
+        ''' Metodo para continuar agregando un articulo a la orden ya creada 
+        '''
         self.articulos.append(articulo)
 
+    # TODO corregir
+    def __str__(self):
+        return 'Numero de orden: ' + str(Orden.numero_orden)
 
 class MedioPago:
     @abstractmethod
