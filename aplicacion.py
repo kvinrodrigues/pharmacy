@@ -36,11 +36,11 @@ class Menu:
             elif opcion_menu == 1:
                 Vista.realizar_pedido()
             elif opcion_menu == 2:
-                pass
+                Vista.cobrar_pedido()
             elif opcion_menu == 3:
-                pass
-            elif opcion_menu == 4:
                 vista.desplegar_articulos()
+            elif opcion_menu == 4:
+                pass
             else:
                 Vista.error_menu()
                 Vista.pausa()

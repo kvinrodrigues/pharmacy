@@ -9,6 +9,7 @@ import os
 
 
 class Controlador:
+    # TODO ver la forma de abstraer mas este metodo
     farmacia = None
     @staticmethod
     def inicializar():
@@ -53,9 +54,7 @@ class Controlador:
         else:
             list_ordenes = []
             modelo_app.crear(dir_ordenes, list_ordenes)
-
-        farmacia.numer    
-
+        Orden.numero_orden = len(list_ordenes) + 1 
         # se cargan los comprobantes existentes
         if Controlador.existe_pickle(dir_comprobantes):
             list_comprobantes = modelo_app.buscar(dir_comprobantes)
@@ -75,6 +74,7 @@ class Controlador:
         return Controlador.farmacia.obtener_articulos()
 
     @staticmethod
+    # TODO optimizar
     def filtrar_articulo_desde(lista, codigo):
         for articulo in lista:
             if articulo.codigo == codigo[0]:
@@ -83,9 +83,36 @@ class Controlador:
         return None
 
     @staticmethod
+    def establecer_numero_orden(orden):
+        '''
+            Metodo encargado de establecer el valor del campo numero de orden.
+        '''
+        if orden is not None:
+            orden.set_numero_orden(len(Controlador.farmacia.ordenes)) 
+
+    @staticmethod
     def crear_orden(articulos):
-        return Controlador.farmacia.realizar_pedido(articulos)
-    
+        orden = Controlador.farmacia.realizar_pedido(articulos)
+        Controlador.establecer_numero_orden(orden)
+        return orden
+
+    @staticmethod
+    def buscar_orden(identificador):
+        ordenes = Controlador.farmacia.ordenes 
+        # TODO averiguar si hay otra forma mas eficiente para filtrar (lambdas?)
+        for orden in ordenes:
+            if (orden.numero_orden == identificador):
+                return orden 
+        return None
+
+    @staticmethod
+    def crear_comprobante(orden, medio_pago, cliente):
+        comprobante = Controlador.farmacia.cobrar_pedido(orden, medio_pago, cliente)
+        return comprobante
+
+    @staticmethod
+    def guardar_comprobante(comprobante):
+        Controlador.farmacia.comprobantes.append(comprobante)  # TODO: debe retornar el comprobante?      
 
     @staticmethod
     def existe_pickle(archivopickle, extension='.pickle'):

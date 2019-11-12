@@ -83,8 +83,9 @@ class Farmacia(Empresa):
         self.ordenes.append(orden)
         return orden   
 
-    def obtener_comprobante(self, numero_orden):
-        pass
+    def cobrar_pedido(self, orden, medio_pago, cliente):
+        comprobante = Comprobante(orden, medio_pago, cliente)
+        return comprobante
 
     def obtener_reporte(self):
         pass
@@ -135,13 +136,16 @@ class Documento:
 
 
 class Orden(Documento):
-    numero_orden = 0
     numero_documento = 0
     descripcion = 'Pedido' # TODO debe ser una constante
     def __init__(self, articulos, *args):
         super().__init__(self.numero_documento, self.descripcion)
-        Orden.numero_orden += 1
         self._articulos = articulos
+        self.numero_orden = None
+
+    def set_numero_orden(self, identificador):
+        if identificador > 0:
+            self.numero_orden = identificador
 
     # TODO agregar solamente si es de tipo articulo
     def agregar_articulo(self, articulo):

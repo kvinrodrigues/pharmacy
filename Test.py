@@ -34,7 +34,7 @@ def test_guardar_nuevo_dato():
     controlador.guardar_nuevos_datos(None, None, None, list_articulos)
     
 # Modelo       
-def test_buscar_dato():
+def test_buscar_articulos():
     articulos = modelo.buscar('datos_articulos/articulos')
     for articulo in articulos:
         print(articulo.descripcion)
@@ -53,8 +53,8 @@ if __name__ == "__main__":
     # test_success_input_number()
     # test_success_input_string()
     # test_menu_principal()
-    test_guardar_nuevo_dato()
-    test_buscar_dato()
+    # test_guardar_nuevo_dato()
+    # test_buscar_articulos()
 
     logging.info("Everything passed")
     test_exit()
