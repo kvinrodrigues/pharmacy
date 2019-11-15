@@ -7,8 +7,12 @@ from modelo import *
 from clases import *
 import os
 
-
 class Controlador:
+
+    # TODO realizar de la siguiente manera
+    # def __init__(self):
+    #     self.modelo = Modelo()
+        
     # TODO ver la forma de abstraer mas este metodo
     farmacia = None
     @staticmethod
@@ -21,8 +25,6 @@ class Controlador:
         dir_articulos = 'datos_articulos/articulos'
 
         modelo_app = Modelo()
-        # TODO plantear el uso de diccionarios y clasificar los articulos por:
-        #  Medicamentos, Belleza, Higiene, etc
         # Se cargan los articulos existentes
         if Controlador.existe_pickle(dir_articulos):
             list_articulos = modelo_app.buscar(dir_articulos)
@@ -79,8 +81,7 @@ class Controlador:
         for articulo in lista:
             if articulo.codigo == codigo[0]:
                 return articulo
-        # TODO debe ser una excepcion?
-        return None
+        raise Exception('No se encontro el articulo')
 
     @staticmethod
     def establecer_numero_orden(orden):
@@ -95,6 +96,24 @@ class Controlador:
         orden = Controlador.farmacia.realizar_pedido(articulos)
         Controlador.establecer_numero_orden(orden)
         return orden
+
+    @staticmethod
+    def obtener_nombre_categoria(identificador):
+        return constants.categoria_articulos[identificador]
+
+    @staticmethod
+    def obtener_categorias_articulos():
+        return [*(constants.categoria_articulos)]
+
+    @staticmethod
+    def obtener_articulos_por_categoria(categoria):
+        articulos = []
+        try:
+            articulos_categorizados = Controlador.filtrar_articulos()
+            articulos = articulos_categorizados[categoria]
+        except(KeyError):
+            raise Exception('No existe la categoria: ' + str(categoria))
+        return articulos
 
     @staticmethod
     def buscar_orden(identificador):

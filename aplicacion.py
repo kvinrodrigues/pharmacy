@@ -8,6 +8,7 @@ from controlador import *
 from clases import *
 from vista import *
 
+
 class Aplicacion:
     '''Clase destinada a la ejecucion de la aplicacion'''
 
@@ -23,28 +24,24 @@ class Aplicacion:
         Vista.limpiar_pantalla()
         Vista.cerrar_aplicacion()
 
+
 class Menu:
     @staticmethod
     def menu_principal():
         ''' Metodo que contiene la parte funcional del menu principal de la aplicación '''
-        vista = Vista()
-        # TODO poner cada opcion disponible en un diccionario que contenga una tupla (titulo, accion)
+        menus = {0: ('Salir', lambda: Aplicacion.salir()), 1: ('Realizar pedido', lambda: Vista.realizar_pedido()),
+                 2: ('Cobrar Pedido', lambda: Vista.cobrar_pedido()), 3 : ('Listar Articulos', lambda: Vista.desplegar_articulos())}
+
         while(True):
             opcion_menu = Vista.menu_principal()
-            if opcion_menu == 0:
-                Aplicacion.salir()
-            elif opcion_menu == 1:
-                Vista.realizar_pedido()
-            elif opcion_menu == 2:
-                Vista.cobrar_pedido()
-            elif opcion_menu == 3:
-                vista.desplegar_articulos()
-            elif opcion_menu == 4:
-                pass
-            else:
+            try: 
+                opcion = menus[opcion_menu]
+                opcion[1]()
+            except KeyError:
                 Vista.error_menu()
                 Vista.pausa()
 
+            # TODO: guardar cada vez que se realicen creaciones en la farmacia
             Controlador.guardar_nuevos_datos(Controlador.farmacia)
 
 

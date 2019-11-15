@@ -64,16 +64,16 @@ class Farmacia(Empresa):
     def obtener_articulos(self):
         ''' Implementacion del metodo de la operacion de obtencion de articulos organizados en categoria '''
         articulo_categorizado = {
-            constants.tipo_medicamento[0]: [], constants.tipo_higiene[0]: [], constants.tipo_belleza[0]: []}
+            constants.key_medicamento: [], constants.key_higiene: [], constants.key_belleza: []}
         for articulo in self.articulos:
             if isinstance(articulo, Medicamento):
-                articulo_categorizado[constants.tipo_medicamento[0]].append(
+                articulo_categorizado[constants.key_medicamento].append(
                     articulo)
             elif isinstance(articulo, Higiene):
-                articulo_categorizado[constants.tipo_higiene[0]].append(
+                articulo_categorizado[constants.key_higiene].append(
                     articulo)
             elif isinstance(articulo, Belleza):
-                articulo_categorizado[constants.tipo_belleza[0]].append(
+                articulo_categorizado[constants.key_belleza].append(
                     articulo)
 
         return articulo_categorizado
@@ -173,7 +173,7 @@ class Tarjeta(MedioPago):
     def __init__(self, *args):
         super().__init__(args)
 
-
+# TODO debe ser abstracto (revisar todo)
 class Comprobante:
     @abstractmethod
     def __init__(self, orden, medio_pago, cliente):

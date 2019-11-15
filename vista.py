@@ -12,38 +12,43 @@ class Vista:
 
     @staticmethod
     def realizar_pedido():
-        articulos = Vista.seleccionar_articulos()
-        orden = Controlador.crear_orden(articulos)
-        # TODO cambiar impresion
-        Vista.imprimir('Orden creada: ' + str(orden.numero_orden))
+        try:
+            articulos = Vista.seleccionar_articulos()
+            orden = Controlador.crear_orden(articulos)
+            Vista.imprimir('Orden creada: ' + str(orden.numero_orden))
+        except Exception:
+            Vista.imprimir('No se pudo generar la orden...')
         Vista.pausa()
 
     @staticmethod
     def cobrar_pedido():
         # Se ingrese el numero de orden
-        # Luego se verifica su validez, si 
+        # Luego se verifica su validez, si
         # no es valido se lanza una excepcion(no se encuentra contemplado tal caso en las especificaciones)
-        
+
         entrada = Vista.leer_numero()
         orden = Controlador.buscar_orden(entrada)
         if orden is None:
             raise Exception("Numero de orden invalida.")
 
-        cliente = Cliente(Persona(Contacto(), 'asdasd', 'Prueba', 'Prueba', 'st. tu casa', '111')) # TODO cambiar
-        medio_pago = MedioPago('Efectivo', 'Valor monetario mediante billetes y monedas') # TODO se debe poder seleccionar el medio de pago
-        
+        cliente = Cliente(Persona(Contacto(), 'asdasd', 'Prueba',
+                                  'Prueba', 'st. tu casa', '111'))  # TODO cambiar
+        # TODO se debe poder seleccionar el medio de pago
+        medio_pago = MedioPago(
+            'Efectivo', 'Valor monetario mediante billetes y monedas')
+
         comprobante = Controlador.crear_comprobante(orden, medio_pago, cliente)
         Controlador.guardar_comprobante(comprobante)
 
-
-    def desplegar_articulos(self):
-        articulos_categorizados = self.controlador.filtrar_articulos()
+    @staticmethod
+    def desplegar_articulos():
+        articulos_categorizados = Controlador.filtrar_articulos()
         '''
             El parametro <<articulos_categorizados>> recibido, es un DICCIONARIO que posee los articulos disponibles en categoria
         '''
-        articulos_higiene = articulos_categorizados[constants.tipo_higiene[0]]
-        articulos_medicamento = articulos_categorizados[constants.tipo_medicamento[0]]
-        articulos_belleza = articulos_categorizados[constants.tipo_belleza[0]]
+        articulos_higiene = articulos_categorizados[constants.key_higiene]
+        articulos_medicamento = articulos_categorizados[constants.key_medicamento]
+        articulos_belleza = articulos_categorizados[constants.key_belleza]
         # TODO separar esta parte, debe estar en el controlador...
         # Debe ser una excepcion capturada por la vista
         condicion = (len(articulos_higiene) == 0 and len(articulos_medicamento)
@@ -186,30 +191,41 @@ class Vista:
     @staticmethod
     def imprimir_opciones_categorias():
         # TODO implementar
-        Vista.imprimir(
-            'Aqui debe imprimir las categorias y su codigo correspondiente!')
-        pass
+        mensaje = (
+            '------------------- Categorias Disponibles ----------------------------')
+        categorias = Controlador.obtener_categorias_articulos()
+        for id in categorias:
+            mensaje += '\n'
+            mensaje += str(id) + '- ' + \
+                Controlador.obtener_nombre_categoria(id)
+        mensaje += '\n'
+        mensaje += '-----------------------------------------------------------------------'
+        Vista.imprimir(mensaje)
 
     @staticmethod
     def seleccionar_articulos():
-        articulos_categorizados = Controlador.filtrar_articulos()
         mensaje = ("--------- Seleccione categoria del articulo ---------")
         Vista.imprimir(mensaje)
         Vista.imprimir_opciones_categorias()
-        # TODO validar que sea valida quizas a traves de KeyError
         categoria_seleccionada = Vista.seleccionar_categoria()
-        articulos_correspondientes = articulos_categorizados[categoria_seleccionada]
-        # TODO separar
-        Vista.limpiar_pantalla()
-        Vista.imprimir('Articulos de la categoria: ' +
-                       str(categoria_seleccionada))
-        for articulo in articulos_correspondientes:
-            Vista.imprimir(articulo)
-        Vista.imprimir('Ingrese numero de articulos, enter para confirmar.')
-        Vista.imprimir('Ingrese numero de articulo -1 para terminar')
-        articulos = Vista.seleccionar_articulos_desde(
-            articulos_correspondientes)
-        return articulos
+        try:
+            articulos_correspondientes = Controlador.obtener_articulos_por_categoria(
+                categoria_seleccionada)
+            Vista.limpiar_pantalla()
+            Vista.imprimir('Articulos de la categoria: ' +
+                           str(categoria_seleccionada))
+            for articulo in articulos_correspondientes:
+                Vista.imprimir(articulo)
+            Vista.imprimir(
+                'Ingrese identificadores de los articulos, enter para confirmar.')
+            Vista.imprimir('Ingrese numero de articulo -1 para terminar')
+            articulos = Vista.seleccionar_articulos_desde(
+                articulos_correspondientes)
+            return articulos
+
+        except Exception as e:
+            Vista.imprimir(e)
+            raise e
 
     @staticmethod
     def seleccionar_articulos_desde(articulo_en_categoria):

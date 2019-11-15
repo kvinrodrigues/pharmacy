@@ -1,9 +1,15 @@
 
 # Tipos de Articulos
-# TODO pensar otra forma de almacenar
-tipo_medicamento = (0, 'medicamento')
-tipo_higiene = (1, 'higiene')
-tipo_belleza = (2, 'belleza') 
+
+key_medicamento = 0
+key_higiene = 1
+key_belleza = 2
+
+categoria_articulos = {
+    key_medicamento: 'medicamento',
+    key_higiene: 'higiene',
+    key_belleza: 'belleza'
+}
 
 # Informacion basica de la empresa
 business_name = 'FarmaService'
