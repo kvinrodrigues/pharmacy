@@ -79,11 +79,12 @@ class Controlador:
     # TODO optimizar
     def filtrar_articulo_desde(lista, codigo):
         for articulo in lista:
-            if articulo.codigo == codigo[0]:
+            if articulo.codigo == codigo:
                 return articulo
         raise Exception('No se encontro el articulo')
 
     @staticmethod
+    # TODO establecer otra manera para setear el numero de orden(quizas ya en el inicializador de la orden)
     def establecer_numero_orden(orden):
         '''
             Metodo encargado de establecer el valor del campo numero de orden.
@@ -122,7 +123,7 @@ class Controlador:
         for orden in ordenes:
             if (orden.numero_orden == identificador):
                 return orden 
-        return None
+        raise Exception("No se encontro la orden: " + str(identificador))
 
     @staticmethod
     def crear_comprobante(orden, medio_pago, cliente):

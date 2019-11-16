@@ -13,39 +13,44 @@ class Vista:
     @staticmethod
     def realizar_pedido():
         try:
-            articulos = Vista.seleccionar_articulos()
-            orden = Controlador.crear_orden(articulos)
-            Vista.imprimir('Orden creada: ' + str(orden.numero_orden))
+            articulos = []
+            articulos = Vista.seleccionar_articulos(articulos)
+            if articulos:
+                orden = Controlador.crear_orden(articulos)
+                Vista.imprimir('Orden creada: ' + str(orden.numero_orden))
+                for art in articulos:
+                    Vista.imprimir(art.descripcion)
+            else:
+                Vista.imprimir('Debe introducir por lo menos un articulo.')    
         except Exception:
             Vista.imprimir('No se pudo generar la orden...')
         Vista.pausa()
 
     @staticmethod
     def cobrar_pedido():
-        # Se ingrese el numero de orden
+        # Se ingres el numero de orden
         # Luego se verifica su validez, si
         # no es valido se lanza una excepcion(no se encuentra contemplado tal caso en las especificaciones)
 
         entrada = Vista.leer_numero()
-        orden = Controlador.buscar_orden(entrada)
-        if orden is None:
-            raise Exception("Numero de orden invalida.")
-
-        cliente = Cliente(Persona(Contacto(), 'asdasd', 'Prueba',
+        try:
+            orden = Controlador.buscar_orden(entrada)
+            cliente = Cliente(Persona(Contacto(), 'asdasd', 'Prueba',
                                   'Prueba', 'st. tu casa', '111'))  # TODO cambiar
-        # TODO se debe poder seleccionar el medio de pago
-        medio_pago = MedioPago(
-            'Efectivo', 'Valor monetario mediante billetes y monedas')
-
-        comprobante = Controlador.crear_comprobante(orden, medio_pago, cliente)
-        Controlador.guardar_comprobante(comprobante)
+            # TODO se debe poder seleccionar el medio de pago
+            medio_pago = MedioPago(
+                'Efectivo', 'Valor monetario mediante billetes y monedas')
+            comprobante = Controlador.crear_comprobante(orden, medio_pago, cliente)
+            Controlador.guardar_comprobante(comprobante)
+        except Exception as e:
+            Vista.imprimir('No se pudo realizar el cobro: ' + str(e))
+        Vista.pausa() 
 
     @staticmethod
     def desplegar_articulos():
-        articulos_categorizados = Controlador.filtrar_articulos()
-        '''
-            El parametro <<articulos_categorizados>> recibido, es un DICCIONARIO que posee los articulos disponibles en categoria
-        '''
+        Vista.limpiar_pantalla()
+        Vista.imprimir('---------- Listado de Articulos en categoria ----------')
+        articulos_categorizados = Controlador.filtrar_articulos() # DICCIONARIO que posee los articulos disponibles en categoria
         articulos_higiene = articulos_categorizados[constants.key_higiene]
         articulos_medicamento = articulos_categorizados[constants.key_medicamento]
         articulos_belleza = articulos_categorizados[constants.key_belleza]
@@ -203,25 +208,27 @@ class Vista:
         Vista.imprimir(mensaje)
 
     @staticmethod
-    def seleccionar_articulos():
+    def seleccionar_articulos(articulos_seleccionados):
+        Vista.limpiar_pantalla()
         mensaje = ("--------- Seleccione categoria del articulo ---------")
         Vista.imprimir(mensaje)
         Vista.imprimir_opciones_categorias()
         categoria_seleccionada = Vista.seleccionar_categoria()
         try:
-            articulos_correspondientes = Controlador.obtener_articulos_por_categoria(
+            articulos_en_categoria = Controlador.obtener_articulos_por_categoria(
                 categoria_seleccionada)
             Vista.limpiar_pantalla()
             Vista.imprimir('Articulos de la categoria: ' +
                            str(categoria_seleccionada))
-            for articulo in articulos_correspondientes:
+            for articulo in articulos_en_categoria:
                 Vista.imprimir(articulo)
             Vista.imprimir(
                 'Ingrese identificadores de los articulos, enter para confirmar.')
             Vista.imprimir('Ingrese numero de articulo -1 para terminar')
-            articulos = Vista.seleccionar_articulos_desde(
-                articulos_correspondientes)
-            return articulos
+            articulos_parciales = Vista.seleccionar_articulos_desde(
+                articulos_en_categoria)
+            articulos_seleccionados.extend(articulos_parciales)    
+            return articulos_seleccionados
 
         except Exception as e:
             Vista.imprimir(e)
@@ -231,11 +238,12 @@ class Vista:
     def seleccionar_articulos_desde(articulo_en_categoria):
         articulos = []
         entrada = Vista.leer_cadena()
-        # TODO Analizar para optimizar, puede ser cuadratico lo sgte
-        # TODO ver otra forma de hacer sin el while
         while(not entrada[0] == '-1'):
+            if entrada[0] == '-2':
+                Vista.seleccionar_articulos(articulos)
+                break
             articulo = Controlador.filtrar_articulo_desde(
-                articulo_en_categoria, entrada)
+                articulo_en_categoria, entrada[0])
             if articulo is not None:
                 articulos.append(articulo)
             else:
