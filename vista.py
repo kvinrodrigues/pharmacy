@@ -4,8 +4,6 @@ import sys
 import logging
 import constants
 
-logging.basicConfig(level=logging.DEBUG)
-
 
 class Vista:
     controlador = Controlador()
@@ -17,12 +15,13 @@ class Vista:
             articulos = Vista.seleccionar_articulos(articulos)
             if articulos:
                 orden = Controlador.crear_orden(articulos)
-                Vista.imprimir('Orden creada: ' + str(orden.numero_orden))
-                for art in articulos:
-                    Vista.imprimir(art.descripcion)
+                Vista.limpiar_pantalla()
+                Vista.imprimir('Detalle de la orden creada: ')
+                Vista.imprimir(Controlador.obtener_detalle_orden(orden))
+
             else:
-                Vista.imprimir('Debe introducir por lo menos un articulo.')    
-        except Exception:
+                Vista.imprimir('Debe introducir por lo menos un articulo.')
+        except Exception as e:
             Vista.imprimir('No se pudo generar la orden...')
         Vista.pausa()
 
@@ -34,23 +33,41 @@ class Vista:
 
         entrada = Vista.leer_numero()
         try:
-            orden = Controlador.buscar_orden(entrada)
-            cliente = Cliente(Persona(Contacto(), 'asdasd', 'Prueba',
-                                  'Prueba', 'st. tu casa', '111'))  # TODO cambiar
+            orden = Controlador.buscar_orden(entrada, constants.estado_pendiente)
+            Vista.imprimir('Introduzca numero de cedula: ')
+            entrada_cedula = Vista.leer_numero()
+            cliente = Controlador.buscar_cliente(entrada_cedula)
+            if cliente is None:
+                Vista.imprimir('Desea crear el cliente de cedula: ' + str(entrada_cedula) + '?')
+                Vista.imprimir('Y: Si, N: No')
+                desea_registrar = Vista.leer_cadena()
+                if desea_registrar[0] == 'Y':
+                    Vista.registrar_cliente(entrada_cedula)
+                elif desea_registrar[0] == 'N':
+                    cliente = Controlador.obtener_cliente_por_defecto()
+                else:
+                    # TODO definir que hacer si introduce mal
+                    pass
+
             # TODO se debe poder seleccionar el medio de pago
             medio_pago = MedioPago(
                 'Efectivo', 'Valor monetario mediante billetes y monedas')
-            comprobante = Controlador.crear_comprobante(orden, medio_pago, cliente)
+            orden.estado = constants.estado_pagado
+            comprobante = Controlador.crear_comprobante(
+                orden, medio_pago, cliente)
+            cliente.facturas.append(comprobante)
             Controlador.guardar_comprobante(comprobante)
         except Exception as e:
             Vista.imprimir('No se pudo realizar el cobro: ' + str(e))
-        Vista.pausa() 
+        Vista.pausa()
 
     @staticmethod
     def desplegar_articulos():
         Vista.limpiar_pantalla()
-        Vista.imprimir('---------- Listado de Articulos en categoria ----------')
-        articulos_categorizados = Controlador.filtrar_articulos() # DICCIONARIO que posee los articulos disponibles en categoria
+        Vista.imprimir(
+            '---------- Listado de Articulos en categoria ----------')
+        # DICCIONARIO que posee los articulos disponibles en categoria
+        articulos_categorizados = Controlador.filtrar_articulos()
         articulos_higiene = articulos_categorizados[constants.key_higiene]
         articulos_medicamento = articulos_categorizados[constants.key_medicamento]
         articulos_belleza = articulos_categorizados[constants.key_belleza]
@@ -75,6 +92,47 @@ class Vista:
                 mensaje = (mensaje + '\t\t' + belleza.descripcion + '\n')
             Vista.imprimir(mensaje)
             Vista.pausa()
+
+    @staticmethod
+    def obtener_informe():
+        # TODO terminar de implementar
+        acciones = {'DD': lambda: Vista.obtener_informe_diario(),
+                    'MM': lambda: Vista.obtener_informe_mensual(),
+                    'YY': lambda: Vista.obtener_informe_anual()}
+
+        Vista.imprimir('Seleccione periodo de tiempo')
+        Vista.imprimir('Diario: DD, Mensual: MM, Anual: YY')
+        entrada = Vista.leer_cadena()
+        acciones[entrada[0]]()  # TODO separar
+
+    @staticmethod
+    def obtener_informe_diario():
+        # TODO terminar de implementar
+        pass
+
+    @staticmethod
+    def obtener_informe_mensual():
+        # TODO terminar de implementar
+        pass
+
+    @staticmethod
+    def registrar_cliente(numero_cedula):
+        # TODO terminar de implementar
+        ''' 
+            Metodo para registrar un cliente en el sistema
+        '''
+        Vista.imprimir('Introduzca nombre: ')
+        nombre = Vista.leer_cadena()[0]
+        Vista.imprimir('Introduzca apellido')
+        apellido = Vista.leer_cadena()[0]
+        Vista.imprimir('Introduzca direccion: ')
+        direccion = Vista.leer_cadena()[0]
+        Vista.imprimir('Introduzca RUC')
+        ruc = Vista.leer_cadena()[0] # Se pide el ruc completo para cubrir casos en el que sea persona juridica
+        contacto = Contacto()  # TODO se debe introducir los contactos
+        cliente = Controlador.registrar_cliente(numero_cedula,
+            nombre, apellido, ruc, direccion, contacto)
+        Vista.imprimir('Cliente registrado exitosamente: ' + str(cliente))
 
     # Metodo para limpiar la pantalla
     @staticmethod
@@ -209,6 +267,9 @@ class Vista:
 
     @staticmethod
     def seleccionar_articulos(articulos_seleccionados):
+        '''
+            Metodo para seleccionar articulos
+        '''
         Vista.limpiar_pantalla()
         mensaje = ("--------- Seleccione categoria del articulo ---------")
         Vista.imprimir(mensaje)
@@ -224,10 +285,11 @@ class Vista:
                 Vista.imprimir(articulo)
             Vista.imprimir(
                 'Ingrese identificadores de los articulos, enter para confirmar.')
-            Vista.imprimir('Ingrese numero de articulo -1 para terminar')
+            Vista.imprimir(
+                'Ingrese numero de articulo: -1 para confirmar; -2 volver atras; -3 cancelar operacion')
             articulos_parciales = Vista.seleccionar_articulos_desde(
                 articulos_en_categoria)
-            articulos_seleccionados.extend(articulos_parciales)    
+            articulos_seleccionados.extend(articulos_parciales)
             return articulos_seleccionados
 
         except Exception as e:
@@ -236,11 +298,16 @@ class Vista:
 
     @staticmethod
     def seleccionar_articulos_desde(articulo_en_categoria):
+        '''
+            Metodo para seleccionar articulos en base al listado de categorias
+        '''
         articulos = []
         entrada = Vista.leer_cadena()
         while(not entrada[0] == '-1'):
             if entrada[0] == '-2':
                 Vista.seleccionar_articulos(articulos)
+                break
+            if entrada[0] == '3':
                 break
             articulo = Controlador.filtrar_articulo_desde(
                 articulo_en_categoria, entrada[0])

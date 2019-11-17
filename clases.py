@@ -21,38 +21,36 @@ class Empresa(metaclass=ABCMeta):
 
 class Vendible:
     @abstractmethod
-    def vender(self):
+    def vender(self, cantidad):
         pass
 
 
 class Articulo(Vendible):
-    def __init__(self, codigo, descripcion):
+    def __init__(self, codigo, descripcion, precio_unitario, stock):
         self.codigo = codigo
         self.descripcion = descripcion
+        self.precio_unitario = precio_unitario
+        self.stock = stock
 
+    def vender(self, cantidad):
+        self.stock -= cantidad
+            
     def __str__(self):
         return self.codigo + " " + self.descripcion
-
-
 class Medicamento(Articulo):
-    # TODO implementar
     def vender(self):
         return super().vender()
-
 
 class Belleza(Articulo):
     def vender(self):
         return super().vender()
 
-
 class Higiene(Articulo):
     def vender(self):
         return super().vender()
 
-
 class Farmacia(Empresa):
     '''Clase de la farmacia'''
-
     def __init__(self, articulos, *args):
         super().__init__(*args)
         self.articulos = articulos
@@ -95,59 +93,53 @@ class Contacto():
     def __init__(self):
         pass
 
-
 class Telefono(Contacto):
     pass
-
 
 class Email(Contacto):
     pass
 
-
 class RedSocial(Contacto):
     pass
-
 
 class Persona:
     @abstractmethod
     def __init__(self, contacto, cedula, nombre, apellido, direccion, ruc):
+        self.nombre = nombre
         self.contacto = contacto
         self.cedula = cedula
         self.apellido = apellido
         self.direccion = direccion
         self.ruc = ruc
 
-
 class Empleado:
     def __init__(self, persona):
         this.persona = persona
 
-
 class Cliente:
     def __init__(self, persona):
         self.persona = persona
-        self.facturas = []
-
+        self.facturas = [] # TODO al hacer el cobro se debe agregar facturas al cliente
 
 class Documento:
     def __init__(self, numero_documento, descripcion):
         self.numero_documento = numero_documento
         self.descripcion = descripcion
 
-
 class Orden(Documento):
     numero_documento = 0
-    descripcion = 'Pedido' # TODO debe ser una constante
+    descripcion = constants.documento_orden
     def __init__(self, articulos, *args):
         super().__init__(self.numero_documento, self.descripcion)
         self._articulos = articulos
         self.numero_orden = None
+        self.estado = constants.estado_pendiente
 
+    # TODO setear a traves del constructor
     def set_numero_orden(self, identificador):
         if identificador > 0:
             self.numero_orden = identificador
 
-    # TODO agregar solamente si es de tipo articulo
     def agregar_articulo(self, articulo):
         ''' Metodo para continuar agregando un articulo a la orden ya creada 
         '''
@@ -155,7 +147,11 @@ class Orden(Documento):
 
     # TODO corregir
     def __str__(self):
-        return 'Numero de orden: ' + str(Orden.numero_orden)
+        mensaje = '\tNumero de orden: ' + str(Orden.numero_orden) + '\n'
+        mensaje += '\tArticulos: \n'
+        for articulo in self._articulos:
+            mensaje += '\t\t' + str(articulo) + '\n'
+        return  mensaje
 
 class MedioPago:
     @abstractmethod
@@ -163,11 +159,9 @@ class MedioPago:
         self.nombre = nombre
         self.descripcion = descripcion
 
-
 class Efectivo(MedioPago):
     def __init__(self, *args):
         super().__init__(args)
-
 
 class Tarjeta(MedioPago):
     def __init__(self, *args):
@@ -180,7 +174,6 @@ class Comprobante:
         self.orden = orden
         self.medio_pago = medio_pago
         self.cliente = cliente
-
 
 class Factura(Comprobante):
     def __init__(self, *args):

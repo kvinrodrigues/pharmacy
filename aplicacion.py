@@ -8,6 +8,7 @@ from controlador import *
 from clases import *
 from vista import *
 
+
 class Aplicacion:
     '''Clase destinada a la ejecucion de la aplicacion'''
 
@@ -23,13 +24,15 @@ class Aplicacion:
         Vista.limpiar_pantalla()
         Vista.cerrar_aplicacion()
 
-
 class Menu:
     @staticmethod
     def menu_principal():
         ''' Metodo que contiene la parte funcional del menu principal de la aplicación '''
-        menus = {0: ('Salir', lambda: Aplicacion.salir()), 1: ('Realizar pedido', lambda: Vista.realizar_pedido()),
-                 2: ('Cobrar Pedido', lambda: Vista.cobrar_pedido()), 3: ('Listar Articulos', lambda: Vista.desplegar_articulos())
+        menus = {0: ('Salir', lambda: Aplicacion.salir()),
+                 1: ('Realizar pedido', lambda: Vista.realizar_pedido()),
+                 2: ('Cobrar Pedido', lambda: Vista.cobrar_pedido()),
+                 3: ('Listar Articulos', lambda: Vista.desplegar_articulos()),
+                 4: ('Obtener Informe', lambda: Vista.obtener_informe())
                  }
 
         while(True):

@@ -81,10 +81,9 @@ class Controlador:
         for articulo in lista:
             if articulo.codigo == codigo:
                 return articulo
-        raise Exception('No se encontro el articulo')
+        raise Exception('No se encontro el articulo de codigo: ' + codigo)
 
     @staticmethod
-    # TODO establecer otra manera para setear el numero de orden(quizas ya en el inicializador de la orden)
     def establecer_numero_orden(orden):
         '''
             Metodo encargado de establecer el valor del campo numero de orden.
@@ -97,6 +96,12 @@ class Controlador:
         orden = Controlador.farmacia.realizar_pedido(articulos)
         Controlador.establecer_numero_orden(orden)
         return orden
+
+    @staticmethod
+    def registrar_cliente(cedula, nombre, apellido, ruc, direccion, contacto):
+        cliente = Cliente(Persona(contacto, cedula, nombre, apellido, direccion, ruc))
+        Controlador.farmacia.clientes.append(cliente)
+        return cliente
 
     @staticmethod
     def obtener_nombre_categoria(identificador):
@@ -117,13 +122,25 @@ class Controlador:
         return articulos
 
     @staticmethod
-    def buscar_orden(identificador):
-        ordenes = Controlador.farmacia.ordenes 
-        # TODO averiguar si hay otra forma mas eficiente para filtrar (lambdas?)
+    def buscar_orden(identificador, estado_busqueda):
+        ordenes = Controlador.farmacia.ordenes
+        # TODO averiguar si hay otra forma mas eficiente para filtrar (lambdas?) FILTRAR por estado_busqueda
         for orden in ordenes:
-            if (orden.numero_orden == identificador):
-                return orden 
+            estado_orden = orden.estado
+            if orden.numero_orden == identificador and estado_orden == estado_busqueda:
+                return orden
+            elif orden.numero_orden == identificador and not estado_orden == estado_busqueda:
+                raise Exception('Estado de orden invalida.') 
+
         raise Exception("No se encontro la orden: " + str(identificador))
+
+    @staticmethod
+    def buscar_cliente(numero_cedula):
+        clientes = Controlador.farmacia.clientes
+        for cliente in clientes:
+            if cliente.persona.cedula == numero_cedula:
+                return cliente
+        return None
 
     @staticmethod
     def crear_comprobante(orden, medio_pago, cliente):
@@ -131,8 +148,15 @@ class Controlador:
         return comprobante
 
     @staticmethod
+    def obtener_detalle_orden(orden):
+        return str(orden)
+
+    @staticmethod
     def guardar_comprobante(comprobante):
-        Controlador.farmacia.comprobantes.append(comprobante)  # TODO: debe retornar el comprobante?      
+        '''
+            Metodo encargado de guardar comprobante en la farmacia
+        '''
+        Controlador.farmacia.comprobantes.append(comprobante)      
 
     @staticmethod
     def existe_pickle(archivopickle, extension='.pickle'):
