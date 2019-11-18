@@ -42,21 +42,21 @@ class Vista:
                 Vista.imprimir('Y: Si, N: No')
                 desea_registrar = Vista.leer_cadena()
                 if desea_registrar[0] == 'Y':
-                    Vista.registrar_cliente(entrada_cedula)
+                    cliente = Vista.registrar_cliente(entrada_cedula)
                 elif desea_registrar[0] == 'N':
                     cliente = Controlador.obtener_cliente_por_defecto()
                 else:
-                    # TODO definir que hacer si introduce mal
-                    pass
-
+                    raise Exception('Opcion invalida')
             # TODO se debe poder seleccionar el medio de pago
             medio_pago = MedioPago(
                 'Efectivo', 'Valor monetario mediante billetes y monedas')
-            orden.estado = constants.estado_pagado
             comprobante = Controlador.crear_comprobante(
                 orden, medio_pago, cliente)
             cliente.facturas.append(comprobante)
+            orden.estado = constants.estado_pagado
             Controlador.guardar_comprobante(comprobante)
+            Vista.imprimir('Cobro realizado con exito: ')
+            Vista.imprimir(str(comprobante))
         except Exception as e:
             Vista.imprimir('No se pudo realizar el cobro: ' + str(e))
         Vista.pausa()
@@ -114,16 +114,23 @@ class Vista:
         mes = Vista.leer_numero()
         Vista.imprimir('Introduzca dia')
         dia = Vista.leer_numero()
-        # TODO separar, debe estar en el controlador la condicion
         condicion = Controlador.definicion_filtro_comprobante_diario(anio, mes, dia)
-        comprobantes = Controlador.filtrar_comprobantes(condicion, anio, mes, dia)
-        for comprobante in comprobantes: # TODO separar impresion de listas
-            Vista.imprimir(comprobante)
+        reporte = Controlador.filtrar_comprobantes(condicion)
+        Vista.imprimir(reporte)
 
     @staticmethod
     def obtener_informe_mensual():
         # TODO terminar de implementar
         pass
+    
+    @staticmethod
+    def obtener_informe_anual():
+        Vista.imprimir('Introduzca anio: ')
+        entrada = Vista.leer_numero()
+        condicion = Controlador.definicion_filtro_comprobante_anual(entrada)
+        reporte = Controlador.filtrar_comprobantes(condicion)
+        Vista.imprimir(reporte)  
+
 
     @staticmethod
     def registrar_cliente(numero_cedula):
@@ -143,6 +150,7 @@ class Vista:
         cliente = Controlador.registrar_cliente(numero_cedula,
             nombre, apellido, ruc, direccion, contacto)
         Vista.imprimir('Cliente registrado exitosamente: ' + str(cliente))
+        return cliente
 
     # Metodo para limpiar la pantalla
     @staticmethod

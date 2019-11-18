@@ -162,12 +162,9 @@ class Controlador:
         Controlador.farmacia.comprobantes.append(comprobante)
 
     @staticmethod
-    def filtrar_comprobantes(condition, anio, mes=1, dia=1):
-        # TODO comentar de manera clara el parametro condition: debe recibir lambdas
-        comprobantes_farmacia = Controlador.farmacia.comprobantes
-        comprobantes_filtrados = filter(condition, comprobantes_farmacia)
-        return comprobantes_filtrados
-
+    def filtrar_comprobantes(condicion):
+        return Controlador.farmacia.obtener_reporte(condicion)
+       
     @staticmethod
     def definicion_filtro_comprobante_diario(anio, mes = 1, dia = 1):
         return (lambda factura: factura.fecha.year == anio

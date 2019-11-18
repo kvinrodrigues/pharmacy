@@ -28,10 +28,11 @@ def test_menu_principal():
 # Controlador
 # TODO agregar tambien los demas datos necesarios
 def test_guardar_nuevo_dato():
-    list_articulos = [Medicamento('0000', 'Omeprazol'), Medicamento('0001', 'Supradyn'), 
-    Belleza('0003','Shampu'), Belleza('0004', 'Colageno'), Higiene('0005', 'Jabon'), 
-    Higiene('0006', 'Pasta Dental')]
-    controlador.guardar_nuevos_datos(None, None, None, list_articulos)
+    list_articulos = [Medicamento('0000', 'Omeprazol', 12000, 200), Medicamento('0001', 'Supradyn', 23500, 121), 
+    Belleza('0003','Shampu', 35000, 50), Belleza('0004', 'Colageno', 40000, 45), Higiene('0005', 'Jabon', 5400, 140), 
+    Higiene('0006', 'Pasta Dental', 10000, 45)]
+    farmacia = Farmacia(list_articulos, constants.business_name, constants.business_ruc)
+    controlador.guardar_nuevos_datos(farmacia)
     
 # Modelo       
 def test_buscar_articulos():
@@ -53,7 +54,7 @@ if __name__ == "__main__":
     # test_success_input_number()
     # test_success_input_string()
     # test_menu_principal()
-    # test_guardar_nuevo_dato()
+    test_guardar_nuevo_dato()
     # test_buscar_articulos()
 
     logging.info("Everything passed")
