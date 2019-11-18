@@ -104,11 +104,21 @@ class Vista:
         Vista.imprimir('Diario: DD, Mensual: MM, Anual: YY')
         entrada = Vista.leer_cadena()
         acciones[entrada[0]]()  # TODO separar
+        Vista.pausa()
 
     @staticmethod
     def obtener_informe_diario():
-        # TODO terminar de implementar
-        pass
+        Vista.imprimir('Introduzca anio: ')
+        anio = Vista.leer_numero()
+        Vista.imprimir('Introduzca mes: ')
+        mes = Vista.leer_numero()
+        Vista.imprimir('Introduzca dia')
+        dia = Vista.leer_numero()
+        # TODO separar, debe estar en el controlador la condicion
+        condicion = Controlador.definicion_filtro_comprobante_diario(anio, mes, dia)
+        comprobantes = Controlador.filtrar_comprobantes(condicion, anio, mes, dia)
+        for comprobante in comprobantes: # TODO separar impresion de listas
+            Vista.imprimir(comprobante)
 
     @staticmethod
     def obtener_informe_mensual():

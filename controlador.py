@@ -7,12 +7,13 @@ from modelo import *
 from clases import *
 import os
 
+
 class Controlador:
 
     # TODO realizar de la siguiente manera
     # def __init__(self):
     #     self.modelo = Modelo()
-        
+
     # TODO ver la forma de abstraer mas este metodo
     farmacia = None
     @staticmethod
@@ -33,7 +34,7 @@ class Controlador:
             modelo_app.crear(dir_articulos, list_articulos)
         farmacia = Farmacia(
             list_articulos, constants.business_name, constants.business_ruc)
-                
+
         Controlador.farmacia = farmacia
 
         # se cargan los clientes existentes
@@ -56,7 +57,7 @@ class Controlador:
         else:
             list_ordenes = []
             modelo_app.crear(dir_ordenes, list_ordenes)
-        Orden.numero_orden = len(list_ordenes) + 1 
+        Orden.numero_orden = len(list_ordenes) + 1
         # se cargan los comprobantes existentes
         if Controlador.existe_pickle(dir_comprobantes):
             list_comprobantes = modelo_app.buscar(dir_comprobantes)
@@ -89,7 +90,7 @@ class Controlador:
             Metodo encargado de establecer el valor del campo numero de orden.
         '''
         if orden is not None:
-            orden.set_numero_orden(len(Controlador.farmacia.ordenes)) 
+            orden.set_numero_orden(len(Controlador.farmacia.ordenes))
 
     @staticmethod
     def crear_orden(articulos):
@@ -99,7 +100,8 @@ class Controlador:
 
     @staticmethod
     def registrar_cliente(cedula, nombre, apellido, ruc, direccion, contacto):
-        cliente = Cliente(Persona(contacto, cedula, nombre, apellido, direccion, ruc))
+        cliente = Cliente(
+            Persona(contacto, cedula, nombre, apellido, direccion, ruc))
         Controlador.farmacia.clientes.append(cliente)
         return cliente
 
@@ -130,7 +132,7 @@ class Controlador:
             if orden.numero_orden == identificador and estado_orden == estado_busqueda:
                 return orden
             elif orden.numero_orden == identificador and not estado_orden == estado_busqueda:
-                raise Exception('Estado de orden invalida.') 
+                raise Exception('Estado de orden invalida.')
 
         raise Exception("No se encontro la orden: " + str(identificador))
 
@@ -144,7 +146,8 @@ class Controlador:
 
     @staticmethod
     def crear_comprobante(orden, medio_pago, cliente):
-        comprobante = Controlador.farmacia.cobrar_pedido(orden, medio_pago, cliente)
+        comprobante = Controlador.farmacia.cobrar_pedido(
+            orden, medio_pago, cliente)
         return comprobante
 
     @staticmethod
@@ -156,7 +159,29 @@ class Controlador:
         '''
             Metodo encargado de guardar comprobante en la farmacia
         '''
-        Controlador.farmacia.comprobantes.append(comprobante)      
+        Controlador.farmacia.comprobantes.append(comprobante)
+
+    @staticmethod
+    def filtrar_comprobantes(condition, anio, mes=1, dia=1):
+        # TODO comentar de manera clara el parametro condition: debe recibir lambdas
+        comprobantes_farmacia = Controlador.farmacia.comprobantes
+        comprobantes_filtrados = filter(condition, comprobantes_farmacia)
+        return comprobantes_filtrados
+
+    @staticmethod
+    def definicion_filtro_comprobante_diario(anio, mes = 1, dia = 1):
+        return (lambda factura: factura.fecha.year == anio
+                and factura.fecha.month == mes
+                and factura.fecha.day == dia)
+
+    @staticmethod
+    def definicion_filtro_comprobante_mensual(anio, mes):
+        return (lambda factura: factura.fecha.year == anio
+                and factura.fecha.month == mes)
+
+    @staticmethod 
+    def definicion_filtro_comprobante_anual(anio):
+        return (lambda factura: factura.fecha.year == anio)
 
     @staticmethod
     def existe_pickle(archivopickle, extension='.pickle'):

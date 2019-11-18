@@ -7,6 +7,7 @@ Sistema de Pedidos de Farmacias
 import abc
 from abc import *
 import constants
+import datetime
 # Abstract
 
 
@@ -174,7 +175,11 @@ class Comprobante:
         self.orden = orden
         self.medio_pago = medio_pago
         self.cliente = cliente
-
+        self.fecha = datetime.datetime.now()
+    
+    def __str__(self):
+        return 'fecha: ' + str(self.fecha)
+# TODO se debe utilizar factura, no el comprobante. aparte, no se debe poder instanciar al padre
 class Factura(Comprobante):
     def __init__(self, *args):
         super.__init__(args)
