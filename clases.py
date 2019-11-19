@@ -9,9 +9,6 @@ from abc import *
 import utiles
 import datetime
 
-# Abstract
-
-
 class Empresa(metaclass=ABCMeta):
     '''Clase abstracta de Empresa'''
     @abstractmethod
@@ -163,13 +160,13 @@ class Documento(metaclass=ABCMeta):
 
 
 class Orden(Documento):
-    numero_documento = 0
+    numero_documento = 0 ## TODO 
     descripcion = utiles.documento_orden
 
     def __init__(self, numero_orden, articulos, *args):
         super().__init__(self.numero_documento, self.descripcion)
         self.articulos = articulos
-        self.numero_orden = None
+        self.numero_orden = numero_orden
         self.estado = utiles.estado_pendiente
 
     def agregar_articulo(self, articulo):
@@ -179,7 +176,7 @@ class Orden(Documento):
         self.articulos.append(articulo)
 
     def __str__(self):
-        mensaje = '\tNumero de orden: ' + str(Orden.numero_orden) + '\n'
+        mensaje = '\tNumero de orden: ' + str(self.numero_orden) + '\n'
         mensaje += '\tArticulos: \n'
         for articulo in self.articulos:
             mensaje += '\t\t' + str(articulo) + '\n'

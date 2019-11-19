@@ -17,7 +17,7 @@ class Vista:
                 orden = Controlador.crear_orden(articulos)
                 Vista.limpiar_pantalla()
                 Vista.imprimir('Detalle de la orden creada: ')
-                Vista.imprimir(Controlador.obtener_detalle_orden(orden))
+                Vista.imprimir(str(orden)) # TODO quitar del controlado, no es necesario
             else:
                 raise Exception('Debe introducir por lo menos un articulo.')
         except Exception as e:
@@ -157,7 +157,7 @@ class Vista:
         Vista.imprimir('Introduzca RUC')
         # Se pide el ruc completo para cubrir casos en el que sea persona juridica
         ruc = Vista.leer_cadena()[0]
-        contacto = Contacto()  # TODO se debe introducir los contactos
+        contacto = Telefono()  # TODO se debe introducir los contactos
         cliente = Controlador.registrar_cliente(numero_cedula,
                                                 nombre, apellido, ruc, direccion, contacto)
         Vista.imprimir('Cliente registrado exitosamente: ' + str(cliente))
@@ -348,8 +348,7 @@ class Vista:
 
     @staticmethod
     def imprimir(mensaje):
-        ''' Mediante este metodo se imprime en la consola
-        '''
+        ''' Mediante este metodo se imprime en la consola '''
         print(mensaje)
 
     @staticmethod

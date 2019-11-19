@@ -147,10 +147,6 @@ class Controlador:
         return not Controlador.farmacia.articulos.isEmpty()
 
     @staticmethod
-    def obtener_detalle_orden(orden):
-        return str(orden)
-
-    @staticmethod
     def guardar_comprobante(comprobante):
         '''
             Metodo encargado de guardar comprobante en la farmacia
