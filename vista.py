@@ -2,7 +2,7 @@ from controlador import *
 import os
 import sys
 import logging
-import constants
+import utiles
 
 
 class Vista:
@@ -18,27 +18,26 @@ class Vista:
                 Vista.limpiar_pantalla()
                 Vista.imprimir('Detalle de la orden creada: ')
                 Vista.imprimir(Controlador.obtener_detalle_orden(orden))
-
             else:
-                Vista.imprimir('Debe introducir por lo menos un articulo.')
+                raise Exception('Debe introducir por lo menos un articulo.')
         except Exception as e:
+            Vista.imprimir(str(e))
             Vista.imprimir('No se pudo generar la orden...')
+
         Vista.pausa()
 
     @staticmethod
     def cobrar_pedido():
-        # Se ingres el numero de orden
-        # Luego se verifica su validez, si
-        # no es valido se lanza una excepcion(no se encuentra contemplado tal caso en las especificaciones)
-
         entrada = Vista.leer_numero()
         try:
-            orden = Controlador.buscar_orden(entrada, constants.estado_pendiente)
+            orden = Controlador.buscar_orden(
+                entrada, utiles.estado_pendiente)
             Vista.imprimir('Introduzca numero de cedula: ')
             entrada_cedula = Vista.leer_numero()
             cliente = Controlador.buscar_cliente(entrada_cedula)
             if cliente is None:
-                Vista.imprimir('Desea crear el cliente de cedula: ' + str(entrada_cedula) + '?')
+                Vista.imprimir(
+                    'Desea crear el cliente de cedula: ' + str(entrada_cedula) + '?')
                 Vista.imprimir('Y: Si, N: No')
                 desea_registrar = Vista.leer_cadena()
                 if desea_registrar[0] == 'Y':
@@ -53,7 +52,7 @@ class Vista:
             comprobante = Controlador.crear_comprobante(
                 orden, medio_pago, cliente)
             cliente.facturas.append(comprobante)
-            orden.estado = constants.estado_pagado
+            orden.estado = utiles.estado_pagado
             Controlador.guardar_comprobante(comprobante)
             Vista.imprimir('Cobro realizado con exito: ')
             Vista.imprimir(str(comprobante))
@@ -64,18 +63,13 @@ class Vista:
     @staticmethod
     def desplegar_articulos():
         Vista.limpiar_pantalla()
-        Vista.imprimir(
-            '---------- Listado de Articulos en categoria ----------')
+        Vista.imprimir('---------- Listado de Articulos en categoria ----------')
         # DICCIONARIO que posee los articulos disponibles en categoria
         articulos_categorizados = Controlador.filtrar_articulos()
-        articulos_higiene = articulos_categorizados[constants.key_higiene]
-        articulos_medicamento = articulos_categorizados[constants.key_medicamento]
-        articulos_belleza = articulos_categorizados[constants.key_belleza]
-        # TODO separar esta parte, debe estar en el controlador...
-        # Debe ser una excepcion capturada por la vista
-        condicion = (len(articulos_higiene) == 0 and len(articulos_medicamento)
-                     and len(articulos_belleza) == 0)
-        if condicion:
+        articulos_higiene = articulos_categorizados[utiles.key_higiene]
+        articulos_medicamento = articulos_categorizados[utiles.key_medicamento]
+        articulos_belleza = articulos_categorizados[utiles.key_belleza]
+        if Controlador.farmacia_existen_articulos():
             Vista.farmacia_sin_articulos()
         else:
             mensaje = ('\n--- LISTA DE ARTICULOS DISPONIBLES: ---\n')
@@ -95,15 +89,14 @@ class Vista:
 
     @staticmethod
     def obtener_informe():
-        # TODO terminar de implementar
         acciones = {'DD': lambda: Vista.obtener_informe_diario(),
                     'MM': lambda: Vista.obtener_informe_mensual(),
-                    'YY': lambda: Vista.obtener_informe_anual()}
-
+                    'YY': lambda: Vista.obtener_informe_anual(),
+                    'WW': lambda: Vista.obtener_informe_semanal()}
         Vista.imprimir('Seleccione periodo de tiempo')
-        Vista.imprimir('Diario: DD, Mensual: MM, Anual: YY')
+        Vista.imprimir('Diario: DD, Semana: WW, Mensual: MM, Anual: YY')
         entrada = Vista.leer_cadena()
-        acciones[entrada[0]]()  # TODO separar
+        utiles.realizar(acciones[entrada[0]])
         Vista.pausa()
 
     @staticmethod
@@ -114,23 +107,40 @@ class Vista:
         mes = Vista.leer_numero()
         Vista.imprimir('Introduzca dia')
         dia = Vista.leer_numero()
-        condicion = Controlador.definicion_filtro_comprobante_diario(anio, mes, dia)
+        condicion = Controlador.definicion_filtro_comprobante_diario(
+            anio, mes, dia)
         reporte = Controlador.filtrar_comprobantes(condicion)
         Vista.imprimir(reporte)
 
     @staticmethod
-    def obtener_informe_mensual():
-        # TODO terminar de implementar
-        pass
+    def obtener_informe_semanal():
+        Vista.imprimir('Introduzca anio: ')
+        anio = Vista.leer_numero()
+        Vista.imprimir('Introduzca mes: ')
+        mes = Vista.leer_numero()
+        Vista.imprimir('Introduzca semana')
+        semana = Vista.leer_numero()
+        condicion = Controlador.definicion_filtro_comprobante_semanal(semana, mes, anio)
+        reporte = Controlador.filtrar_comprobantes(condicion)
+        Vista.imprimir(reporte)
     
+    @staticmethod
+    def obtener_informe_mensual():
+        Vista.imprimir('Introduzca anio: ')
+        anio = Vista.leer_numero()
+        Vista.imprimir('Introduzca mes: ')
+        mes = Vista.leer_numero()
+        condicion = Controlador.definicion_filtro_comprobante_mensual(anio, mes)
+        reporte = Controlador.filtrar_comprobantes(condicion)
+        Vista.imprimir(reporte)
+
     @staticmethod
     def obtener_informe_anual():
         Vista.imprimir('Introduzca anio: ')
         entrada = Vista.leer_numero()
         condicion = Controlador.definicion_filtro_comprobante_anual(entrada)
         reporte = Controlador.filtrar_comprobantes(condicion)
-        Vista.imprimir(reporte)  
-
+        Vista.imprimir(reporte)
 
     @staticmethod
     def registrar_cliente(numero_cedula):
@@ -145,10 +155,11 @@ class Vista:
         Vista.imprimir('Introduzca direccion: ')
         direccion = Vista.leer_cadena()[0]
         Vista.imprimir('Introduzca RUC')
-        ruc = Vista.leer_cadena()[0] # Se pide el ruc completo para cubrir casos en el que sea persona juridica
+        # Se pide el ruc completo para cubrir casos en el que sea persona juridica
+        ruc = Vista.leer_cadena()[0]
         contacto = Contacto()  # TODO se debe introducir los contactos
         cliente = Controlador.registrar_cliente(numero_cedula,
-            nombre, apellido, ruc, direccion, contacto)
+                                                nombre, apellido, ruc, direccion, contacto)
         Vista.imprimir('Cliente registrado exitosamente: ' + str(cliente))
         return cliente
 
@@ -271,7 +282,6 @@ class Vista:
 
     @staticmethod
     def imprimir_opciones_categorias():
-        # TODO implementar
         mensaje = (
             '------------------- Categorias Disponibles ----------------------------')
         categorias = Controlador.obtener_categorias_articulos()

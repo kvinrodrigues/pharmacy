@@ -33,7 +33,7 @@ class Controlador:
             list_articulos = []
             modelo_app.crear(dir_articulos, list_articulos)
         farmacia = Farmacia(
-            list_articulos, constants.business_name, constants.business_ruc)
+            list_articulos, utiles.business_name, utiles.business_ruc)
 
         Controlador.farmacia = farmacia
 
@@ -85,17 +85,9 @@ class Controlador:
         raise Exception('No se encontro el articulo de codigo: ' + codigo)
 
     @staticmethod
-    def establecer_numero_orden(orden):
-        '''
-            Metodo encargado de establecer el valor del campo numero de orden.
-        '''
-        if orden is not None:
-            orden.set_numero_orden(len(Controlador.farmacia.ordenes))
-
-    @staticmethod
     def crear_orden(articulos):
-        orden = Controlador.farmacia.realizar_pedido(articulos)
-        Controlador.establecer_numero_orden(orden)
+        numero_orden = len(Controlador.farmacia.ordenes)
+        orden = Controlador.farmacia.realizar_pedido(numero_orden, articulos)
         return orden
 
     @staticmethod
@@ -107,11 +99,11 @@ class Controlador:
 
     @staticmethod
     def obtener_nombre_categoria(identificador):
-        return constants.categoria_articulos[identificador]
+        return utiles.categoria_articulos[identificador]
 
     @staticmethod
     def obtener_categorias_articulos():
-        return [*(constants.categoria_articulos)]
+        return [*(utiles.categoria_articulos)]
 
     @staticmethod
     def obtener_articulos_por_categoria(categoria):
@@ -151,6 +143,10 @@ class Controlador:
         return comprobante
 
     @staticmethod
+    def farmacia_existen_articulos():
+        return not Controlador.farmacia.articulos.isEmpty()
+
+    @staticmethod
     def obtener_detalle_orden(orden):
         return str(orden)
 
@@ -164,19 +160,29 @@ class Controlador:
     @staticmethod
     def filtrar_comprobantes(condicion):
         return Controlador.farmacia.obtener_reporte(condicion)
-       
+
     @staticmethod
-    def definicion_filtro_comprobante_diario(anio, mes = 1, dia = 1):
+    def definicion_filtro_comprobante_diario(anio, mes=1, dia=1):
         return (lambda factura: factura.fecha.year == anio
                 and factura.fecha.month == mes
                 and factura.fecha.day == dia)
 
     @staticmethod
-    def definicion_filtro_comprobante_mensual(anio, mes):
-        return (lambda factura: factura.fecha.year == anio
-                and factura.fecha.month == mes)
+    def numero_de_semana_por_mes(date_value):
+        # Se obtiene la diferencia entre la semana del anio en base a la fecha y la semana del dia que comienza el mes
+        # luego se adiciona 1
+        return (date_value.isocalendar()[1] - date_value.replace(day=1).isocalendar()[1] + 1)
 
-    @staticmethod 
+    @staticmethod
+    def definicion_filtro_comprobante_semanal(semana, mes, anio):
+        return (lambda factura: Controlador.numero_de_semana_por_mes(factura.fecha) == semana
+                and factura.fecha.month == mes and factura.fecha.year == anio)
+
+    @staticmethod
+    def definicion_filtro_comprobante_mensual(anio, mes):
+        return (lambda factura: factura.fecha.month == mes and factura.fecha.year == anio)
+
+    @staticmethod
     def definicion_filtro_comprobante_anual(anio):
         return (lambda factura: factura.fecha.year == anio)
 

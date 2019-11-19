@@ -6,8 +6,9 @@ Sistema de Pedidos de Farmacias
 
 import abc
 from abc import *
-import constants
+import utiles
 import datetime
+
 # Abstract
 
 
@@ -69,27 +70,27 @@ class Farmacia(Empresa):
     def obtener_articulos(self):
         ''' Implementacion del metodo de la operacion de obtencion de articulos organizados en categoria '''
         articulo_categorizado = {
-            constants.key_medicamento: [], constants.key_higiene: [], constants.key_belleza: []}
+            utiles.key_medicamento: [], utiles.key_higiene: [], utiles.key_belleza: []}
         for articulo in self.articulos:
             if isinstance(articulo, Medicamento):
-                articulo_categorizado[constants.key_medicamento].append(
+                articulo_categorizado[utiles.key_medicamento].append(
                     articulo)
             elif isinstance(articulo, Higiene):
-                articulo_categorizado[constants.key_higiene].append(
+                articulo_categorizado[utiles.key_higiene].append(
                     articulo)
             elif isinstance(articulo, Belleza):
-                articulo_categorizado[constants.key_belleza].append(
+                articulo_categorizado[utiles.key_belleza].append(
                     articulo)
 
         return articulo_categorizado
 
-    def realizar_pedido(self, articulos):
-        orden = Orden(articulos)
+    def realizar_pedido(self, numero_orden, articulos):
+        orden = Orden(numero_orden, articulos)
         self.ordenes.append(orden)
         return orden
 
     def cobrar_pedido(self, orden, medio_pago, cliente):
-        comprobante = Comprobante(orden, medio_pago, cliente)
+        comprobante = Factura((orden, medio_pago, cliente))
         return comprobante
 
     def obtener_reporte(self, condicion):
@@ -108,7 +109,7 @@ class Farmacia(Empresa):
         return mensaje
 
 
-class Contacto():
+class Contacto(metaclass=ABCMeta):
     @abstractmethod
     def __init__(self):
         pass
@@ -149,13 +150,13 @@ class Empleado:
 class Cliente:
     def __init__(self, persona):
         self.persona = persona
-        self.facturas = []  # TODO al hacer el cobro se debe agregar facturas al cliente
+        self.facturas = []
 
     def __str__(self):
         return str(self.persona)
 
 
-class Documento:
+class Documento(metaclass=ABCMeta):
     def __init__(self, numero_documento, descripcion):
         self.numero_documento = numero_documento
         self.descripcion = descripcion
@@ -163,25 +164,20 @@ class Documento:
 
 class Orden(Documento):
     numero_documento = 0
-    descripcion = constants.documento_orden
+    descripcion = utiles.documento_orden
 
-    def __init__(self, articulos, *args):
+    def __init__(self, numero_orden, articulos, *args):
         super().__init__(self.numero_documento, self.descripcion)
         self.articulos = articulos
         self.numero_orden = None
-        self.estado = constants.estado_pendiente
-
-    # TODO setear a traves del constructor
-    def set_numero_orden(self, identificador):
-        if identificador > 0:
-            self.numero_orden = identificador
+        self.estado = utiles.estado_pendiente
 
     def agregar_articulo(self, articulo):
-        ''' Metodo para continuar agregando un articulo a la orden ya creada 
+        ''' 
+            Metodo para continuar agregando un articulo a la orden ya creada 
         '''
         self.articulos.append(articulo)
 
-    # TODO corregir
     def __str__(self):
         mensaje = '\tNumero de orden: ' + str(Orden.numero_orden) + '\n'
         mensaje += '\tArticulos: \n'
@@ -190,7 +186,7 @@ class Orden(Documento):
         return mensaje
 
 
-class MedioPago:
+class MedioPago(metaclass=ABCMeta):
     @abstractmethod
     def __init__(self, nombre, descripcion):
         self.nombre = nombre
@@ -207,9 +203,7 @@ class Tarjeta(MedioPago):
         super().__init__(args)
 
 # TODO debe ser abstracto (revisar todo)
-
-
-class Comprobante:
+class Comprobante(metaclass=ABCMeta):
     @abstractmethod
     def __init__(self, orden, medio_pago, cliente):
         self.orden = orden
@@ -219,8 +213,6 @@ class Comprobante:
 
     def __str__(self):
         return 'fecha: ' + str(self.fecha)
-# TODO se debe utilizar factura, no el comprobante. aparte, no se debe poder instanciar al padre
-
 
 class Factura(Comprobante):
     def __init__(self, *args):

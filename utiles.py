@@ -1,3 +1,5 @@
+# ------------------------ Constantes ------------------------
+
 # Tipos de Documentos
 documento_orden = 'ORDEN'
 
@@ -20,3 +22,14 @@ business_ruc = '45465465-12'
 # Estados de ordenes
 estado_pendiente = 'PENDIENTE'
 estado_pagado = 'PAGADO'
+
+
+# ------------------------ Metodos comunes ------------------------
+
+def realizar(accion):
+    ''' 
+        Metodo que recibe una accion a realizar (debe recibir una funcion)
+        TODO documentar mejor
+    '''
+    accion()
+
