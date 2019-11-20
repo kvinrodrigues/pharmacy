@@ -1,9 +1,14 @@
+__author__ = "Kevin Samuel Rodrigues Toledo"
+'''
+    Sistema de Pedidos en Farmacias
+
+'''
+
 from controlador import *
 import os
 import sys
 import logging
 import utiles
-
 
 class Vista:
     @staticmethod
@@ -15,7 +20,6 @@ class Vista:
                 orden = Controlador.crear_orden(articulos)
                 Vista.limpiar_pantalla()
                 Vista.imprimir('Detalle de la orden creada: ')
-                # TODO quitar del controlado, no es necesario
                 Vista.imprimir(str(orden))
             else:
                 raise Exception('Debe introducir por lo menos un articulo.')
@@ -31,7 +35,7 @@ class Vista:
         entrada = Vista.leer_numero()
         try:
             orden = Controlador.buscar_orden(
-                entrada, utiles.estado_pendiente)
+                entrada, utiles.ESTADO_PENDIENTE)
             Vista.imprimir('Introduzca numero de cedula: ')
             entrada_cedula = Vista.leer_numero()
             cliente = Controlador.buscar_cliente(entrada_cedula)
@@ -51,7 +55,7 @@ class Vista:
             comprobante = Controlador.crear_comprobante(
                 orden, medio_pago, cliente)
             cliente.facturas.append(comprobante)
-            orden.estado = utiles.estado_pagado
+            orden.estado = utiles.ESTADO_PAGADO
             Controlador.guardar_comprobante(comprobante)
             Vista.imprimir('Cobro realizado con exito: ')
             Vista.imprimir(str(comprobante))
@@ -80,9 +84,9 @@ class Vista:
             '---------- Listado de Articulos en categoria ----------')
         # DICCIONARIO que posee los articulos disponibles en categoria
         articulos_categorizados = Controlador.filtrar_articulos()
-        articulos_higiene = articulos_categorizados[utiles.key_higiene]
-        articulos_medicamento = articulos_categorizados[utiles.key_medicamento]
-        articulos_belleza = articulos_categorizados[utiles.key_belleza]
+        articulos_higiene = articulos_categorizados[utiles.KEY_HIGIENE]
+        articulos_medicamento = articulos_categorizados[utiles.KEY_MEDICAMENTO]
+        articulos_belleza = articulos_categorizados[utiles.KEY_BELLEZA]
         if not Controlador.farmacia_existen_articulos():
             Vista.farmacia_sin_articulos()
         else:
@@ -160,7 +164,6 @@ class Vista:
 
     @staticmethod
     def registrar_cliente(numero_cedula):
-        # TODO terminar de implementar
         ''' 
             Metodo para registrar un cliente en el sistema
         '''
@@ -171,11 +174,10 @@ class Vista:
         Vista.imprimir('Introduzca direccion: ')
         direccion = Vista.leer_cadena()[0]
         Vista.imprimir('Introduzca RUC')
-        # Se pide el ruc completo para cubrir casos en el que sea persona juridica
         ruc = Vista.leer_cadena()[0]
-        contacto = Vista.seleccionar_contactos()
+        contactos = Vista.seleccionar_contactos()
         cliente = Controlador.registrar_cliente(numero_cedula,
-                                                nombre, apellido, ruc, direccion, contacto)
+                                                nombre, apellido, ruc, direccion, contactos)
         Vista.imprimir('Cliente registrado exitosamente: ' + str(cliente))
         return cliente
 
@@ -188,10 +190,10 @@ class Vista:
                       2: lambda: Vista.seleccionar_contacto_email(),
                       3: lambda: Vista.seleccionar_contacto_red_social()}
             Vista.imprimir('Seleccione tipo de contacto: {}, {}, {}, {}'
-                           .format('1. Telefono', '2: Email', '3: Red Social', '-1 para terminar'))
-            entrada = Vista.leer_numero() # TODO validar entrada invalida
+                           .format('1. Telefono', '2: Email', '3: Red Social', '-1: Finalizar'))
+            entrada = Vista.leer_numero()
             if (entrada == -1):
-                return contactos 
+                return contactos
             contactos.append(utiles.realizar(opcion[entrada]))
                      
     @staticmethod
@@ -245,11 +247,11 @@ class Vista:
                 activo = False
                 return valor_numerico
         except ValueError as e:
-            return ("Debe ingresar un número")
+            raise ValueError("Debe ingresar un número")
         except TypeError as e:
-            return ("Debe ingresar un número")
+            raise ("Debe ingresar un número")
         except Exception as e:
-            return (e)
+            raise (e)
 
     @staticmethod
     def leer_cadena(mensaje='', default=None):
@@ -368,7 +370,7 @@ class Vista:
             Vista.imprimir(
                 'Ingrese identificadores de los articulos, enter para confirmar.')
             Vista.imprimir(
-                'Ingrese numero de articulo: -1 para confirmar; -2 volver atras; -3 cancelar operacion')
+                'Ingrese numero de articulo: -1 para confirmar; -2 volver atras')
             articulos_parciales = Vista.seleccionar_articulos_desde(
                 articulos_en_categoria)
             articulos_seleccionados.extend(articulos_parciales)

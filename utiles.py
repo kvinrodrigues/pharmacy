@@ -1,27 +1,34 @@
+__author__ = "Kevin Samuel Rodrigues Toledo"
+'''
+    Sistema de Pedidos en Farmacias
+    Este script contiene los elementos comunes utilizados a lo largo del sistema
+'''
+
 # ------------------------ Constantes ------------------------
 
 # Tipos de Documentos
-documento_orden = 'ORDEN'
+DOCUMENTO_ORDEN = 'ORDEN'
+NUMERO_DOC_ORDEN = 0
 
 # Tipos de Articulos
 
-key_medicamento = 0
-key_higiene = 1
-key_belleza = 2
+KEY_MEDICAMENTO = 0
+KEY_HIGIENE = 1
+KEY_BELLEZA = 2
 
-categoria_articulos = {
-    key_medicamento: 'medicamento',
-    key_higiene: 'higiene',
-    key_belleza: 'belleza'
+CATEGORIA_ARTICULOS = {
+    KEY_MEDICAMENTO: 'medicamento',
+    KEY_HIGIENE: 'higiene',
+    KEY_BELLEZA: 'belleza'
 }
 
 # Informacion basica de la empresa
-business_name = 'FarmaService'
-business_ruc = '45465465-12'
+NOMBRE_EMPRESA = 'FarmaService'
+RUC_EMPRESA = '45465465-12'
 
 # Estados de ordenes
-estado_pendiente = 'PENDIENTE'
-estado_pagado = 'PAGADO'
+ESTADO_PENDIENTE = 'PENDIENTE'
+ESTADO_PAGADO = 'PAGADO'
 
 # Datos cliente por defecto
 CLIENTE_DEFECTO_NOMBRE = 'ElSEIS'
@@ -38,7 +45,6 @@ CLIENTE_DEFECTO_RUC = '6000-1'
 def realizar(accion):
     ''' 
         Metodo que recibe una accion a realizar (debe recibir una funcion)
-        TODO documentar mejor
     '''
     accion()
 

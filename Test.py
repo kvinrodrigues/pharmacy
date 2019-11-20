@@ -1,3 +1,5 @@
+__author__ = "Kevin Samuel Rodrigues Toledo"
+
 from vista import *
 import logging
 from controlador import *
@@ -10,8 +12,6 @@ controlador = Controlador()
 modelo = Modelo()
 
 # Happy Cases
-
-
 def test_success_input_number():
     numero = vista.leer_numero("Introduzca numero: ", 0, 150000, 2)
     logging.debug('Se introdujo el valor: ' + str(numero))
@@ -26,12 +26,11 @@ def test_menu_principal():
     Vista.menu_principal()
 
 # Controlador
-# TODO agregar tambien los demas datos necesarios
 def test_guardar_nuevo_dato():
     list_articulos = [Medicamento('0000', 'Omeprazol', 12000, 200), Medicamento('0001', 'Supradyn', 23500, 121), 
     Belleza('0003','Shampu', 35000, 50), Belleza('0004', 'Colageno', 40000, 45), Higiene('0005', 'Jabon', 5400, 140), 
     Higiene('0006', 'Pasta Dental', 10000, 45)]
-    farmacia = Farmacia(list_articulos, utiles.business_name, utiles.business_ruc)
+    farmacia = Farmacia(list_articulos, utiles.NOMBRE_EMPRESA, utiles.RUC_EMPRESA)
     controlador.guardar_nuevos_datos(farmacia)
     
 # Modelo       

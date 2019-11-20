@@ -1,3 +1,4 @@
+__author__ = "Kevin Samuel Rodrigues Toledo"
 '''
     Sistema de Pedidos en Farmacias
 
@@ -6,6 +7,7 @@
 from modelo import *
 from clases import *
 import os
+
 
 class Controlador:
     farmacia = None
@@ -16,7 +18,6 @@ class Controlador:
         '''
         dir_ordenes = 'datos_ordenes/ordenes'
         dir_clientes = 'datos_clientes/clientes'
-        dir_empleados = 'datos_empleados/empleados'
         dir_comprobantes = 'datos_comprobantes/comprobantes'
         dir_articulos = 'datos_articulos/articulos'
 
@@ -28,7 +29,7 @@ class Controlador:
             list_articulos = []
             modelo_app.crear(dir_articulos, list_articulos)
         farmacia = Farmacia(
-            list_articulos, utiles.business_name, utiles.business_ruc)
+            list_articulos, utiles.NOMBRE_EMPRESA, utiles.RUC_EMPRESA)
 
         Controlador.farmacia = farmacia
 
@@ -38,13 +39,6 @@ class Controlador:
         else:
             list_clientes = []
             modelo_app.crear(dir_clientes, list_clientes)
-
-        # se cargan los empleados existentes
-        if Controlador.existe_pickle(dir_empleados):
-            list_empleados = modelo_app.buscar(dir_empleados)
-        else:
-            list_empleados = []
-            modelo_app.crear(dir_empleados, list_empleados)
 
         # se cargan las ordenes existentes
         if Controlador.existe_pickle(dir_ordenes):
@@ -64,8 +58,16 @@ class Controlador:
         farmacia.ordenes = list_ordenes
         farmacia.clientes = list_clientes
         farmacia.articulos = list_articulos
-        farmacia.empleados = list_empleados
         return farmacia
+
+    @staticmethod
+    def crear_orden(articulos):
+        ''' Metodo para realizar la creacion del pedido 
+            mediante una orden dentro del sistema 
+        '''
+        numero_orden = len(Controlador.farmacia.ordenes)
+        orden = Controlador.farmacia.realizar_pedido(numero_orden, articulos)
+        return orden
 
     @staticmethod
     def filtrar_articulos():
@@ -74,6 +76,7 @@ class Controlador:
 
     @staticmethod
     def obtener_cliente_por_defecto():
+        ''' Metodo para obtener cliente por defecto a utilizar al cobrar pedido '''
         persona = Persona(Email(utiles.CLIENTE_DEFECTO_CONTACTO_VALOR), utiles.CLIENTE_DEFECTO_CI, utiles.CLIENTE_DEFECTO_NOMBRE,
                           utiles.CLIENTE_DEFECTO_APELLIDO, utiles.CLIENTE_DEFECTO_DIRECCION,
                           utiles.CLIENTE_DEFECTO_RUC)
@@ -81,42 +84,42 @@ class Controlador:
 
     @staticmethod
     def filtrar_articulo_desde(lista, codigo):
+        ''' Metodo para obtener un articulo mediante el codigo proveido, 
+            apartir de la lista de articulos recibido 
+        '''
         for articulo in lista:
             if articulo.codigo == codigo:
                 return articulo
         raise Exception('No se encontro el articulo de codigo: ' + codigo)
 
     @staticmethod
-    def crear_orden(articulos):
-        numero_orden = len(Controlador.farmacia.ordenes)
-        orden = Controlador.farmacia.realizar_pedido(numero_orden, articulos)
-        return orden
-
-    @staticmethod
     def registrar_cliente(cedula, nombre, apellido, ruc, direccion, contacto):
+        ''' Metodo para proceder a la creacion del cliente en el sistema '''
         cliente = Cliente(
             Persona(contacto, cedula, nombre, apellido, direccion, ruc))
         Controlador.farmacia.clientes.append(cliente)
         return cliente
 
     @staticmethod
-    def obtener_nombre_categoria(identificador):
-        return utiles.categoria_articulos[identificador]
-
-    @staticmethod
     def obtener_metodo_pago_efectivo():
+        ''' Metodo que retorna la instancia del medio de pago tipo efectivo '''
         return Efectivo('Efectivo', 'Pago mediante efectivo')
 
     @staticmethod
     def obtener_metodo_pago_tarjeta():
+        ''' Metodo que retorna la instancia del medio de pago tipo tarjeta '''
         return Tarjeta('Tarjeta', 'Pago mediante tarjeta')
 
     @staticmethod
     def obtener_categorias_articulos():
-        return [*(utiles.categoria_articulos)]
+        ''' Se retorna una copia de las categorias de articulos disponibles '''
+        return [*(utiles.CATEGORIA_ARTICULOS)]
 
     @staticmethod
     def obtener_articulos_por_categoria(categoria):
+        ''' Metodo que retorna los articulos disponibles en la categoria introducida,
+            se lanza una excepcion caso que no se encuentre el articulo
+        '''
         articulos = []
         try:
             articulos_categorizados = Controlador.filtrar_articulos()
@@ -148,8 +151,14 @@ class Controlador:
         return None
 
     @staticmethod
+    def obtener_nombre_categoria(identificador):
+        return utiles.CATEGORIA_ARTICULOS[identificador]
+
+    @staticmethod
     def crear_comprobante(orden, medio_pago, cliente):
         ''' Metodo para realizar la creacion del comprobante '''
+        articulos = orden.articulos
+        map(lambda articulo: articulo.vender(1), articulos) # por cada articulo se realiza la reduccion de stock
         comprobante = Controlador.farmacia.cobrar_pedido(
             orden, medio_pago, cliente)
         return comprobante
@@ -196,12 +205,12 @@ class Controlador:
 
     @staticmethod
     def definicion_filtro_comprobante_anual(anio):
+        ''' Metodo que retorna la condicion que se debe cumplor para filtrar comprobantes por anio '''
         return (lambda factura: factura.fecha.year == anio)
 
     @staticmethod
     def existe_pickle(archivopickle, extension='.pickle'):
-        '''--------------------- verificar pickle ---------------------'''
-        # Metodo estatico que verifica la existencia del archivo pickle
+        ''' Metodo que verifica la existencia del archivo pickle '''
         if os.path.exists(archivopickle + extension):
             return True
         else:
