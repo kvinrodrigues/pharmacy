@@ -1,4 +1,9 @@
 __author__ = "Kevin Samuel Rodrigues Toledo"
+__license__ = "Public Domain"
+__version__ = "1.0.0"
+__email__ = "kevin.rodrigues@fpuna.edu.py"
+__status__ = "Prototype"
+
 '''
     Sistema de Pedidos en Farmacias
     Este script contiene los elementos comunes utilizados a lo largo del sistema

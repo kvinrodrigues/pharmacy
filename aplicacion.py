@@ -23,7 +23,9 @@ class Aplicacion:
         Vista.limpiar_pantalla()
         Vista.cerrar_aplicacion()
 
+
 class Menu:
+    ''' Clase que contiene el menu principal '''
     @staticmethod
     def menu_principal():
         ''' Metodo que contiene la parte funcional del menu principal de la aplicación '''
@@ -31,23 +33,19 @@ class Menu:
                  1: ('Realizar pedido', lambda: Vista.realizar_pedido()),
                  2: ('Cobrar Pedido', lambda: Vista.cobrar_pedido()),
                  3: ('Listar Articulos', lambda: Vista.desplegar_articulos()),
-                 4: ('Obtener Informe', lambda: Vista.obtener_informe())
+                 4: ('Gestionar Informe', lambda: Vista.gestionar_informe())
                  }
 
         while(True):
             opcion_menu = Vista.menu_principal()
             try:
                 opcion = menus[opcion_menu]
-                Menu.realizar_accion(opcion[1])
+                utiles.realizar(opcion[1])
             except KeyError:
                 Vista.error_menu()
                 Vista.pausa()
 
             Controlador.guardar_nuevos_datos(Controlador.farmacia)
-
-    @staticmethod
-    def realizar_accion(opcion):
-        opcion()
 
 
 if __name__ == '__main__':

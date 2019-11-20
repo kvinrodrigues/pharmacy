@@ -1,4 +1,8 @@
 __author__ = "Kevin Samuel Rodrigues Toledo"
+__license__ = "Public Domain"
+__version__ = "1.0.0"
+__email__ = "kevin.rodrigues@fpuna.edu.py"
+__status__ = "Prototype"
 
 from vista import *
 import logging
@@ -57,5 +61,5 @@ if __name__ == "__main__":
     # test_buscar_articulos()
 
     logging.info("Everything passed")
-    test_exit()
+    # test_exit()
     

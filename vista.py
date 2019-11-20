@@ -1,4 +1,9 @@
 __author__ = "Kevin Samuel Rodrigues Toledo"
+__license__ = "Public Domain"
+__version__ = "1.0.0"
+__email__ = "kevin.rodrigues@fpuna.edu.py"
+__status__ = "Prototype"
+
 '''
     Sistema de Pedidos en Farmacias
 
@@ -9,6 +14,7 @@ import os
 import sys
 import logging
 import utiles
+
 
 class Vista:
     @staticmethod
@@ -32,8 +38,8 @@ class Vista:
     @staticmethod
     def cobrar_pedido():
         Vista.imprimir('Introduzca numero de orden: ')
-        entrada = Vista.leer_numero()
         try:
+            entrada = Vista.leer_numero()
             orden = Controlador.buscar_orden(
                 entrada, utiles.ESTADO_PENDIENTE)
             Vista.imprimir('Introduzca numero de cedula: ')
@@ -106,15 +112,18 @@ class Vista:
         Vista.pausa()
 
     @staticmethod
-    def obtener_informe():
-        acciones = {'DD': lambda: Vista.obtener_informe_diario(),
-                    'MM': lambda: Vista.obtener_informe_mensual(),
-                    'YY': lambda: Vista.obtener_informe_anual(),
-                    'WW': lambda: Vista.obtener_informe_semanal()}
-        Vista.imprimir('Seleccione periodo de tiempo')
-        Vista.imprimir('Diario: DD, Semana: WW, Mensual: MM, Anual: YY')
-        entrada = Vista.leer_cadena()
-        utiles.realizar(acciones[entrada[0]])
+    def gestionar_informe():
+        try:
+            acciones = {'DD': lambda: Vista.obtener_informe_diario(),
+                        'MM': lambda: Vista.obtener_informe_mensual(),
+                        'YY': lambda: Vista.obtener_informe_anual(),
+                        'WW': lambda: Vista.obtener_informe_semanal()}
+            Vista.imprimir('Seleccione periodo de tiempo')
+            Vista.imprimir('Diario: DD, Semana: WW, Mensual: MM, Anual: YY')
+            entrada = Vista.leer_cadena()
+            utiles.realizar(acciones[entrada[0]])
+        except Exception as e:
+            Vista.imprimir("Error al intentar obtener informe: " + str(e))
         Vista.pausa()
 
     @staticmethod
@@ -195,7 +204,7 @@ class Vista:
             if (entrada == -1):
                 return contactos
             contactos.append(utiles.realizar(opcion[entrada]))
-                     
+
     @staticmethod
     def seleccionar_contacto_telefono():
         ''' Metodo para selecciona un contacto de tipo telefonico '''
@@ -217,7 +226,7 @@ class Vista:
         ''' Metodo para selecciona un contacto de tipo red social '''
         Vista.imprimir('Introduzca valor: ')
         valor = Vista.leer_cadena()
-        return RedSocial(valor)   
+        return RedSocial(valor)
 
     # Metodo para limpiar la pantalla
     @staticmethod
@@ -249,7 +258,7 @@ class Vista:
         except ValueError as e:
             raise ValueError("Debe ingresar un número")
         except TypeError as e:
-            raise ("Debe ingresar un número")
+            raise Exception("Debe ingresar un número")
         except Exception as e:
             raise (e)
 

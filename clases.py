@@ -1,4 +1,9 @@
-# author <<Kevin Samuel Rodrigues Toledo>>
+__author__ = "Kevin Samuel Rodrigues Toledo"
+__license__ = "Public Domain"
+__version__ = "1.0.0"
+__email__ = "kevin.rodrigues@fpuna.edu.py"
+__status__ = "Prototype"
+
 '''
 Sistema de Pedidos de Farmacias
 
@@ -53,6 +58,7 @@ class Medicamento(Articulo):
     def __str__(self):
         return self.codigo + " " + self.descripcion
 
+
 class Belleza(Articulo):
     ''' Clase belleza, el cual es un articulo '''
 
@@ -62,6 +68,7 @@ class Belleza(Articulo):
     def __str__(self):
         return self.codigo + " " + self.descripcion
 
+
 class Higiene(Articulo):
     ''' Clase higiene, el cual es un articulo '''
 
@@ -70,6 +77,7 @@ class Higiene(Articulo):
 
     def __str__(self):
         return self.codigo + " " + self.descripcion
+
 
 class Farmacia(Empresa):
     '''Clase de la farmacia'''
@@ -130,28 +138,29 @@ class Farmacia(Empresa):
 class Contacto(metaclass=ABCMeta):
     ''' Clase abstracta del contacto '''
     @abstractmethod
-    def __init__(self, *args):
-        pass
+    def __init__(self, valor):
+        self.valor = valor
 
 
 class Telefono(Contacto):
     ''' Clase telefono, el cual es un contacto '''
 
-    def __init__(self, prefijo, valor, *args):
+    def __init__(self, prefijo, *args):
         super().__init__(*args)
+        self.prefijo = prefijo
 
 
 class Email(Contacto):
     ''' Clase email, el cual es un contacto '''
 
-    def __init__(self, valor, *args):
+    def __init__(self, *args):
         super().__init__(*args)
 
 
 class RedSocial(Contacto):
     ''' Clase red social, el cual es un contacto '''
 
-    def __init__(self, valor, *args):
+    def __init__(self, *args):
         super().__init__(*args)
 
 
@@ -253,7 +262,8 @@ class Factura(Comprobante):
     def __str__(self):
         orden = self.orden
         monto_total = 0
-        mensaje = 'Factura: \n\t\tNumero de orden: {}'.format(orden.numero_orden)
+        mensaje = 'Factura: \n\t\tNumero de orden: {}'.format(
+            orden.numero_orden)
         mensaje += '\n\t\t Articulos: '
         for articulo in orden.articulos:
             mensaje += '\n\t\t\t' + str(articulo)

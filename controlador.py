@@ -1,4 +1,9 @@
 __author__ = "Kevin Samuel Rodrigues Toledo"
+__license__ = "Public Domain"
+__version__ = "1.0.0"
+__email__ = "kevin.rodrigues@fpuna.edu.py"
+__status__ = "Prototype"
+
 '''
     Sistema de Pedidos en Farmacias
 
@@ -179,10 +184,10 @@ class Controlador:
         return Controlador.farmacia.obtener_reporte(condicion)
 
     @staticmethod
-    def definicion_filtro_comprobante_diario(anio, mes=1, dia=1):
+    def definicion_filtro_comprobante_diario(anio, mes = 1, dia = 1):
         ''' Metodo que retorna la condicion que se debe cumplir para filtrar comprobantes por dia '''
         return (lambda factura: factura.fecha.year == anio
-                and factura.fecha.month == mes
+                and factura.fecha.month == mes 
                 and factura.fecha.day == dia)
 
     @staticmethod
@@ -191,6 +196,14 @@ class Controlador:
         # Se obtiene la diferencia entre la semana del anio en base a la fecha y la semana del dia que comienza el mes
         # luego se adiciona 1
         return (date_value.isocalendar()[1] - date_value.replace(day=1).isocalendar()[1] + 1)
+
+    @staticmethod
+    def es_mes_valido(mes):
+        return mes > 0 and mes <= 12
+
+    @staticmethod
+    def es_dia_valido(dia):
+        return dia > 0 and dia <= 31
 
     @staticmethod
     def definicion_filtro_comprobante_semanal(semana, mes, anio):
