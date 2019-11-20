@@ -18,8 +18,12 @@ class Modelo:
         	archivo.close()
 
     def buscar(self, directorio, extension = '.pickle'):
-        ''' Busqueda de objeto '''             
-        archivo = open(directorio + extension, 'rb')
-        objeto = pickle.load(archivo)
-        archivo.close()
-        return objeto
+        ''' Busqueda de objeto '''
+        no_encontrado = 'No encontrado'
+        try:   
+            archivo = open(directorio + extension, 'rb')
+            objeto = pickle.load(archivo)
+            archivo.close()
+            return objeto
+        except IOError:
+            return no_encontrado

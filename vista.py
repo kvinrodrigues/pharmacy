@@ -15,7 +15,8 @@ class Vista:
                 orden = Controlador.crear_orden(articulos)
                 Vista.limpiar_pantalla()
                 Vista.imprimir('Detalle de la orden creada: ')
-                Vista.imprimir(str(orden)) # TODO quitar del controlado, no es necesario
+                # TODO quitar del controlado, no es necesario
+                Vista.imprimir(str(orden))
             else:
                 raise Exception('Debe introducir por lo menos un articulo.')
         except Exception as e:
@@ -66,21 +67,23 @@ class Vista:
         '''
         Vista.limpiar_pantalla()
         Vista.imprimir('----------- Seleccion Metodo de Pago ------------')
-        Vista.imprimir('Seleccione metodo de pago: 1: Efectivo, 2: Tarjeta') 
-        metodo_pago = {1: Controlador.obtener_metodo_pago_efectivo(), 2: Controlador.obtener_metodo_pago_tarjeta()}
+        Vista.imprimir('Seleccione metodo de pago: 1: Efectivo, 2: Tarjeta')
+        metodo_pago = {1: Controlador.obtener_metodo_pago_efectivo(
+        ), 2: Controlador.obtener_metodo_pago_tarjeta()}
         entrada = Vista.leer_numero()
         return metodo_pago[entrada]
 
     @staticmethod
     def desplegar_articulos():
         Vista.limpiar_pantalla()
-        Vista.imprimir('---------- Listado de Articulos en categoria ----------')
+        Vista.imprimir(
+            '---------- Listado de Articulos en categoria ----------')
         # DICCIONARIO que posee los articulos disponibles en categoria
         articulos_categorizados = Controlador.filtrar_articulos()
         articulos_higiene = articulos_categorizados[utiles.key_higiene]
         articulos_medicamento = articulos_categorizados[utiles.key_medicamento]
         articulos_belleza = articulos_categorizados[utiles.key_belleza]
-        if Controlador.farmacia_existen_articulos():
+        if not Controlador.farmacia_existen_articulos():
             Vista.farmacia_sin_articulos()
         else:
             mensaje = ('\n--- LISTA DE ARTICULOS DISPONIBLES: ---\n')
@@ -96,7 +99,7 @@ class Vista:
             for belleza in articulos_belleza:
                 mensaje = (mensaje + '\t\t' + belleza.descripcion + '\n')
             Vista.imprimir(mensaje)
-            Vista.pausa()
+        Vista.pausa()
 
     @staticmethod
     def obtener_informe():
@@ -131,17 +134,19 @@ class Vista:
         mes = Vista.leer_numero()
         Vista.imprimir('Introduzca semana')
         semana = Vista.leer_numero()
-        condicion = Controlador.definicion_filtro_comprobante_semanal(semana, mes, anio)
+        condicion = Controlador.definicion_filtro_comprobante_semanal(
+            semana, mes, anio)
         reporte = Controlador.filtrar_comprobantes(condicion)
         Vista.imprimir(reporte)
-    
+
     @staticmethod
     def obtener_informe_mensual():
         Vista.imprimir('Introduzca anio: ')
         anio = Vista.leer_numero()
         Vista.imprimir('Introduzca mes: ')
         mes = Vista.leer_numero()
-        condicion = Controlador.definicion_filtro_comprobante_mensual(anio, mes)
+        condicion = Controlador.definicion_filtro_comprobante_mensual(
+            anio, mes)
         reporte = Controlador.filtrar_comprobantes(condicion)
         Vista.imprimir(reporte)
 
@@ -168,11 +173,49 @@ class Vista:
         Vista.imprimir('Introduzca RUC')
         # Se pide el ruc completo para cubrir casos en el que sea persona juridica
         ruc = Vista.leer_cadena()[0]
-        contacto = Telefono()  # TODO se debe introducir los contactos
+        contacto = Vista.seleccionar_contactos()
         cliente = Controlador.registrar_cliente(numero_cedula,
                                                 nombre, apellido, ruc, direccion, contacto)
         Vista.imprimir('Cliente registrado exitosamente: ' + str(cliente))
         return cliente
+
+    @staticmethod
+    def seleccionar_contactos():
+        Vista.imprimir('--------- Seleccion de contactos ----------')
+        contactos = []
+        while(True):
+            opcion = {1: lambda: Vista.seleccionar_contacto_telefono(),
+                      2: lambda: Vista.seleccionar_contacto_email(),
+                      3: lambda: Vista.seleccionar_contacto_red_social()}
+            Vista.imprimir('Seleccione tipo de contacto: {}, {}, {}, {}'
+                           .format('1. Telefono', '2: Email', '3: Red Social', '-1 para terminar'))
+            entrada = Vista.leer_numero() # TODO validar entrada invalida
+            if (entrada == -1):
+                return contactos 
+            contactos.append(utiles.realizar(opcion[entrada]))
+                     
+    @staticmethod
+    def seleccionar_contacto_telefono():
+        ''' Metodo para selecciona un contacto de tipo telefonico '''
+        Vista.imprimir('Introduzca prefijo: ')
+        prefijo = Vista.leer_numero()
+        Vista.imprimir('Introduzca valor: ')
+        valor = Vista.leer_numero()
+        return Telefono(prefijo, valor)
+
+    @staticmethod
+    def seleccionar_contacto_email():
+        ''' Metodo para selecciona un contacto de tipo correo electronico '''
+        Vista.imprimir('Introduzca valor')
+        valor = Vista.leer_cadena()
+        return Email(valor)
+
+    @staticmethod
+    def seleccionar_contacto_red_social():
+        ''' Metodo para selecciona un contacto de tipo red social '''
+        Vista.imprimir('Introduzca valor: ')
+        valor = Vista.leer_cadena()
+        return RedSocial(valor)   
 
     # Metodo para limpiar la pantalla
     @staticmethod
@@ -182,7 +225,7 @@ class Vista:
 
     # Metodo para la lectura de numeros con manejo de excepciones
     @staticmethod
-    def leer_numero(mensaje='', valor_minimo=0, valor_maximo=None, default=None):
+    def leer_numero(mensaje='', valor_minimo=-1, valor_maximo=None, default=None):
         ''' Se valida para establecer un rango de validez
          :param str mensaje: El mensaje a mostrar al usuario
          :param int valor_minimo: Valor minimo aceptable
@@ -346,8 +389,8 @@ class Vista:
             if entrada[0] == '-2':
                 Vista.seleccionar_articulos(articulos)
                 break
-            if entrada[0] == '3':
-                break
+            if entrada[0] == '-3':
+                return []
             articulo = Controlador.filtrar_articulo_desde(
                 articulo_en_categoria, entrada[0])
             if articulo is not None:

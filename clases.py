@@ -17,12 +17,10 @@ class Empresa(metaclass=ABCMeta):
         self.__nombre = nombre
         self.__ruc = ruc
 
-
 class Vendible:
     @abstractmethod
     def vender(self, cantidad):
         pass
-
 
 class Articulo(Vendible):
     def __init__(self, codigo, descripcion, precio_unitario, stock):
@@ -37,21 +35,17 @@ class Articulo(Vendible):
     def __str__(self):
         return self.codigo + " " + self.descripcion
 
-
 class Medicamento(Articulo):
     def vender(self):
         return super().vender()
-
 
 class Belleza(Articulo):
     def vender(self):
         return super().vender()
 
-
 class Higiene(Articulo):
     def vender(self):
         return super().vender()
-
 
 class Farmacia(Empresa):
     '''Clase de la farmacia'''
@@ -95,7 +89,6 @@ class Farmacia(Empresa):
         ganancia_total = 0
         comprobantes = self.comprobantes
         comprobantes_filtrados = filter(condicion, comprobantes)
-        # ganancia_total =
         for comprobante in comprobantes_filtrados:
             articulos = comprobante.orden.articulos
             articulos_vendidos += len(articulos)
@@ -105,22 +98,22 @@ class Farmacia(Empresa):
                    .format(ganancia_total, articulos_vendidos))
         return mensaje
 
-
 class Contacto(metaclass=ABCMeta):
     @abstractmethod
     def __init__(self):
         pass
 
 class Telefono(Contacto):
-    def __init__(self):
-        pass
+    def __init__(self, prefijo, valor, *args):
+        super().__init__(*args)
+
 class Email(Contacto):
-    def __init__(self):
-        pass
+    def __init__(self, valor, *args):
+        super().__init__(*args)
 
 class RedSocial(Contacto):
-    def __init__(self):
-        pass
+    def __init__(self, valor, *args):
+        super().__init__(*args)
 
 class Persona:
     @abstractmethod
@@ -136,11 +129,9 @@ class Persona:
         return ('Nombre: {}, Apellido {}, Cedula: {}'
                 .format(self.nombre, self.apellido, self.cedula))
 
-
 class Empleado:
     def __init__(self, persona):
         this.persona = persona
-
 
 class Cliente:
     def __init__(self, persona):
@@ -150,15 +141,13 @@ class Cliente:
     def __str__(self):
         return str(self.persona)
 
-
 class Documento(metaclass=ABCMeta):
     def __init__(self, numero_documento, descripcion):
         self.numero_documento = numero_documento
         self.descripcion = descripcion
 
-
 class Orden(Documento):
-    numero_documento = 0 ## TODO 
+    numero_documento = 0  # TODO
     descripcion = utiles.documento_orden
 
     def __init__(self, numero_orden, articulos, *args):
@@ -182,16 +171,14 @@ class Orden(Documento):
 
 
 class MedioPago(metaclass=ABCMeta):
-    @abstractmethod    
+    @abstractmethod
     def __init__(self, nombre, descripcion):
         self.nombre = nombre
         self.descripcion = descripcion
 
-
 class Efectivo(MedioPago):
     def __init__(self, *args):
         super().__init__(*args)
-
 
 class Tarjeta(MedioPago):
     def __init__(self, *args):

@@ -23,6 +23,15 @@ business_ruc = '45465465-12'
 estado_pendiente = 'PENDIENTE'
 estado_pagado = 'PAGADO'
 
+# Datos cliente por defecto
+CLIENTE_DEFECTO_NOMBRE = 'ElSEIS'
+CLIENTE_DEFECTO_APELLIDO = 'MIL'
+CLIENTE_DEFECTO_DIRECCION = 'Asuncion c/Identificaciones'
+CLIENTE_DEFECTO_CONTACTO_VALOR = 'elseis_mil@correo.com'
+CLIENTE_DEFECTO_CI = '6000'
+CLIENTE_DEFECTO_RUC = '6000-1'
+
+
 
 # ------------------------ Metodos comunes ------------------------
 
