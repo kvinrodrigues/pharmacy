@@ -87,7 +87,7 @@ class Farmacia(Empresa):
         return orden
 
     def cobrar_pedido(self, orden, medio_pago, cliente):
-        comprobante = Factura((orden, medio_pago, cliente))
+        comprobante = Factura(orden, medio_pago, cliente)
         return comprobante
 
     def obtener_reporte(self, condicion):
@@ -111,18 +111,16 @@ class Contacto(metaclass=ABCMeta):
     def __init__(self):
         pass
 
-
 class Telefono(Contacto):
-    pass
-
-
+    def __init__(self):
+        pass
 class Email(Contacto):
-    pass
-
+    def __init__(self):
+        pass
 
 class RedSocial(Contacto):
-    pass
-
+    def __init__(self):
+        pass
 
 class Persona:
     @abstractmethod
@@ -184,7 +182,7 @@ class Orden(Documento):
 
 
 class MedioPago(metaclass=ABCMeta):
-    @abstractmethod
+    @abstractmethod    
     def __init__(self, nombre, descripcion):
         self.nombre = nombre
         self.descripcion = descripcion
@@ -192,14 +190,13 @@ class MedioPago(metaclass=ABCMeta):
 
 class Efectivo(MedioPago):
     def __init__(self, *args):
-        super().__init__(args)
+        super().__init__(*args)
 
 
 class Tarjeta(MedioPago):
     def __init__(self, *args):
-        super().__init__(args)
+        super().__init__(*args)
 
-# TODO debe ser abstracto (revisar todo)
 class Comprobante(metaclass=ABCMeta):
     @abstractmethod
     def __init__(self, orden, medio_pago, cliente):
@@ -213,4 +210,4 @@ class Comprobante(metaclass=ABCMeta):
 
 class Factura(Comprobante):
     def __init__(self, *args):
-        super.__init__(args)
+        super().__init__(*args)

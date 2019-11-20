@@ -8,7 +8,6 @@ from controlador import *
 from clases import *
 from vista import *
 
-
 class Aplicacion:
     '''Clase destinada a la ejecucion de la aplicacion'''
 

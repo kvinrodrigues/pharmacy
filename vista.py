@@ -6,8 +6,6 @@ import utiles
 
 
 class Vista:
-    controlador = Controlador()
-
     @staticmethod
     def realizar_pedido():
         try:
@@ -28,6 +26,7 @@ class Vista:
 
     @staticmethod
     def cobrar_pedido():
+        Vista.imprimir('Introduzca numero de orden: ')
         entrada = Vista.leer_numero()
         try:
             orden = Controlador.buscar_orden(
@@ -46,9 +45,8 @@ class Vista:
                     cliente = Controlador.obtener_cliente_por_defecto()
                 else:
                     raise Exception('Opcion invalida')
-            # TODO se debe poder seleccionar el medio de pago
-            medio_pago = MedioPago(
-                'Efectivo', 'Valor monetario mediante billetes y monedas')
+            Vista.pausa()
+            medio_pago = Vista.seleccionar_metodo_pago()
             comprobante = Controlador.crear_comprobante(
                 orden, medio_pago, cliente)
             cliente.facturas.append(comprobante)
@@ -56,9 +54,22 @@ class Vista:
             Controlador.guardar_comprobante(comprobante)
             Vista.imprimir('Cobro realizado con exito: ')
             Vista.imprimir(str(comprobante))
+            Vista.pausa()
         except Exception as e:
             Vista.imprimir('No se pudo realizar el cobro: ' + str(e))
-        Vista.pausa()
+            Vista.pausa()
+
+    @staticmethod
+    def seleccionar_metodo_pago():
+        ''' 
+            Metodo que permite ingresar el tipo de medio de pago a utilizar
+        '''
+        Vista.limpiar_pantalla()
+        Vista.imprimir('----------- Seleccion Metodo de Pago ------------')
+        Vista.imprimir('Seleccione metodo de pago: 1: Efectivo, 2: Tarjeta') 
+        metodo_pago = {1: Controlador.obtener_metodo_pago_efectivo(), 2: Controlador.obtener_metodo_pago_tarjeta()}
+        entrada = Vista.leer_numero()
+        return metodo_pago[entrada]
 
     @staticmethod
     def desplegar_articulos():

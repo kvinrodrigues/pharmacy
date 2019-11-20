@@ -77,6 +77,11 @@ class Controlador:
         return Controlador.farmacia.obtener_articulos()
 
     @staticmethod
+    def obtener_cliente_por_defecto():
+        persona = Persona(Email(), 6000000, 'ElSEIS', 'MIL', 'Seattle ...', '6000000-1') # TODO quizas poner como constante
+        return Cliente(persona)
+
+    @staticmethod
     # TODO optimizar
     def filtrar_articulo_desde(lista, codigo):
         for articulo in lista:
@@ -100,6 +105,14 @@ class Controlador:
     @staticmethod
     def obtener_nombre_categoria(identificador):
         return utiles.categoria_articulos[identificador]
+
+    @staticmethod
+    def obtener_metodo_pago_efectivo():
+        return Efectivo('Efectivo', 'Pago mediante efectivo') # TODO poner en constante
+
+    @staticmethod
+    def obtener_metodo_pago_tarjeta():
+        return Tarjeta('Tarjeta', 'Pago mediante tarjeta') # TODO poner en constante    
 
     @staticmethod
     def obtener_categorias_articulos():
