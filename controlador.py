@@ -198,14 +198,6 @@ class Controlador:
         return (date_value.isocalendar()[1] - date_value.replace(day=1).isocalendar()[1] + 1)
 
     @staticmethod
-    def es_mes_valido(mes):
-        return mes > 0 and mes <= 12
-
-    @staticmethod
-    def es_dia_valido(dia):
-        return dia > 0 and dia <= 31
-
-    @staticmethod
     def definicion_filtro_comprobante_semanal(semana, mes, anio):
         ''' Metodo que retorna la condicion que se debe cumplir para filtrar comprobantes por semana '''
         return (lambda factura: Controlador.numero_de_semana_por_mes(factura.fecha) == semana
