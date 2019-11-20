@@ -214,7 +214,7 @@ class Orden(Documento):
         mensaje = '\tNumero de orden: ' + str(self.numero_orden) + '\n'
         mensaje += '\tArticulos: \n'
         for articulo in self.articulos:
-            mensaje += '\t\t' + str(articulo) + '\n'
+            mensaje += '\t\t' + str(articulo) + '\t' + str(articulo.precio_unitario) + '\n'
         return mensaje
 
 
