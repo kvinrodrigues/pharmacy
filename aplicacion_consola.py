@@ -6,7 +6,7 @@ __status__ = "Prototype"
 
 from controlador import *
 from clases import *
-from vista import *
+from vista_consola import *
 
 class Aplicacion:
     '''Clase destinada a la ejecucion de la aplicacion'''
@@ -20,8 +20,8 @@ class Aplicacion:
     @staticmethod
     def salir():
         '''Cierra la aplicación'''
-        Vista.limpiar_pantalla()
-        Vista.cerrar_aplicacion()
+        Vista_Consola.limpiar_pantalla()
+        Vista_Consola.cerrar_aplicacion()
 
 
 class Menu:
@@ -30,20 +30,20 @@ class Menu:
     def menu_principal():
         ''' Metodo que contiene la parte funcional del menu principal de la aplicación '''
         menus = {0: ('Salir', lambda: Aplicacion.salir()),
-                 1: ('Realizar pedido', lambda: Vista.realizar_pedido()),
-                 2: ('Cobrar Pedido', lambda: Vista.cobrar_pedido()),
-                 3: ('Listar Articulos', lambda: Vista.desplegar_articulos()),
-                 4: ('Gestionar Informe', lambda: Vista.gestionar_informe())
+                 1: ('Realizar pedido', lambda: Vista_Consola.realizar_pedido()),
+                 2: ('Cobrar Pedido', lambda: Vista_Consola.cobrar_pedido()),
+                 3: ('Listar Articulos', lambda: Vista_Consola.desplegar_articulos()),
+                 4: ('Gestionar Informe', lambda: Vista_Consola.gestionar_informe())
                  }
 
         while(True):
-            opcion_menu = Vista.menu_principal()
+            opcion_menu = Vista_Consola.menu_principal()
             try:
                 opcion = menus[opcion_menu]
                 utiles.realizar(opcion[1])
             except KeyError:
-                Vista.error_menu()
-                Vista.pausa()
+                Vista_Consola.error_menu()
+                Vista_Consola.pausa()
 
             Controlador.guardar_nuevos_datos(Controlador.farmacia)
 
