@@ -44,7 +44,6 @@ CLIENTE_DEFECTO_CI = '6000'
 CLIENTE_DEFECTO_RUC = '6000-1'
 
 
-
 # ------------------------ Metodos comunes ------------------------
 
 def realizar(accion):
@@ -52,4 +51,3 @@ def realizar(accion):
         Metodo que recibe una accion a realizar (debe recibir una funcion)
     '''
     accion()
-

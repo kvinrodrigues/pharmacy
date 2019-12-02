@@ -1,7 +1,97 @@
 from tkinter import *
+import tkinter as tk
+from controlador import *
 
 
 class VistaTkinter:
+
+    @staticmethod
+    def realizar_pedido(ventana_raiz):
+        articulos = VistaTkinter.seleccionar_articulos(ventana_raiz)
+        if articulos:
+            orden = Controlador.crear_orden(articulos)
+            # TODO mostrar mensaje de creacion de orden
+        else:
+            # raise Exception('Debe introducir por lo menos un articulo.')
+            pass
+
+    @staticmethod
+    def seleccionar_articulos(ventana_raiz):
+        ventana_hija = VTopLevel(ventana_raiz.ventana, '')
+        ventana_hija.ventana.geometry("350x470+500+200")
+        ventana_hija.ventana.configure(background='white')
+        etiqueta_titulo = Etiqueta(ventana=ventana_hija.ventana,
+                                   nombre="Realizar Pedido", color="#0078D7",
+                                   fuente='Verdana', tamano=16)
+        etiqueta_seleccion = Etiqueta(ventana=ventana_hija.ventana,
+                                      nombre="Categoria: ", color="#0078D7",
+                                      fuente='Verdana', tamano=10)
+        etiqueta_titulo.invocar_pack()
+        etiqueta_seleccion.invocar_pack()
+        option_list = Controlador.obtener_categorias_articulos()
+        # TODO crear clases propias para String var y optionmenu
+        variable = tk.StringVar(ventana_hija.ventana)
+        variable.set(option_list[0])
+        opt = tk.OptionMenu(ventana_hija.ventana, variable, *option_list)
+        opt.config(width=90, font=('Verdana', 12))
+        opt.pack(side="top")
+
+        etiqueta_categoria = Etiqueta(ventana=ventana_hija.ventana,
+                                      nombre=Controlador.obtener_nombre_categoria(int(variable.get())), color="#0078D7",
+                                      fuente='Verdana', tamano=16)
+        etiqueta_categoria.invocar_pack()
+
+        def callback(*args):
+            categoria_seleccionada = Controlador.obtener_nombre_categoria(int(variable.get()))
+            etiqueta_categoria.etiqueta.configure(text="{}".format(categoria_seleccionada))
+
+        variable.trace("w", callback)
+
+    @staticmethod
+    def desplegar_articulos(ventana_raiz):
+        articulos_categorizados = Controlador.filtrar_articulos()
+        articulos_higiene = articulos_categorizados[utiles.KEY_HIGIENE]
+
+        articulos_medicamento = articulos_categorizados[utiles.KEY_MEDICAMENTO]
+        articulos_belleza = articulos_categorizados[utiles.KEY_BELLEZA]
+        if not Controlador.farmacia_existen_articulos():
+            mensaje = "Farmacia sin articulos"
+        else:
+            mensaje = ('--- MEDICAMENTOS: --- \n')
+            for medicamento in articulos_medicamento:
+                mensaje = (mensaje + medicamento.descripcion + '\n')
+
+            mensaje = mensaje + ('--- ARTICULOS DE HIGIENE PERSONAL: --- \n')
+            for higiene in articulos_higiene:
+                mensaje = (mensaje + higiene.descripcion + '\n')
+
+            mensaje = mensaje + ('--- ARTICULOS DE BELLEZA: --- \n')
+            for belleza in articulos_belleza:
+                mensaje = (mensaje + belleza.descripcion + '\n')
+
+        ventana_raiz.ventana.withdraw()
+
+        ventana1 = VTopLevel(ventana_raiz.ventana, 'Articulos Disponibles')
+        ventana1.ventana.geometry("350x470+500+200")
+        ventana1.ventana.configure(background='white')
+
+        etiqueta1 = Etiqueta(ventana=ventana1.ventana,
+                             nombre="Articulos Disponibles", color="#0078D7",
+                             fuente='Verdana', tamano=16)
+        etiqueta1.invocar_pack()
+
+        etiqueta2 = Etiqueta(ventana=ventana1.ventana,
+                             nombre=mensaje, color="black",
+                             fuente='Verdana', tamano=10)
+        etiqueta2.invocar_pack()
+
+        boton1 = Boton(ventana=ventana1.ventana,
+                       nombre="OK", color="white",
+                       evento=lambda: ventana1.salir()
+                                      or ventana_raiz.ventana.deiconify())
+        boton1.invocar_pack("centro")
+        boton1.boton.configure(background="#3687DC", width=9)
+
     @staticmethod
     def agregar_espaciado(ventana_raiz):
         (Etiqueta(ventana=ventana_raiz.ventana,
@@ -13,8 +103,7 @@ class VistaTkinter:
         ''' Metodo para el menu principal de la aplicacion '''
         vista_principal = Ventana('Principal')
 
-        ventana_raiz = VTopLevel(
-            vista_principal, "Sistema de pedidos para farmacias")
+        ventana_raiz = VTopLevel(vista_principal.ventana, 'Sistema de pedidos para farmacias')
         ventana_raiz.ventana.geometry("384x320+500+200")
         ventana_raiz.ventana.configure(background="white")
 
@@ -29,26 +118,35 @@ class VistaTkinter:
 
         boton_hacer_pedido = Boton(ventana=ventana_raiz.ventana,
                                    nombre="Realizar pedido", color="black",
-                                   evento=lambda: print('asdasd'))
+                                   evento=lambda: VistaTkinter.realizar_pedido(ventana_raiz))
 
         boton_hacer_pedido.invocar_pack()
         boton_hacer_pedido.boton.configure(width=15)
 
         VistaTkinter.agregar_espaciado(ventana_raiz)
 
-        boton5 = Boton(ventana=ventana_raiz.ventana,
-                       nombre="Salir", color="white",
-                       evento=lambda: VistaTkinter.cerrar_aplicacion(
-                           ventana_raiz, vista_principal))
-        boton5.invocar_pack()
-        boton5.boton.configure(background='red', width=15)
+        boton_ver_articulos = Boton(ventana=ventana_raiz.ventana,
+                                    nombre="Listar Articulos", color="black",
+                                    evento=lambda: VistaTkinter.desplegar_articulos(ventana_raiz))
+
+        boton_ver_articulos.invocar_pack()
+        boton_ver_articulos.boton.configure(width=15)
+
+        VistaTkinter.agregar_espaciado(ventana_raiz)
+
+        boton_salir = Boton(ventana=ventana_raiz.ventana,
+                            nombre="Salir", color="white",
+                            evento=lambda: VistaTkinter.cerrar_aplicacion(
+                                ventana_raiz))
+        boton_salir.invocar_pack()
+        boton_salir.boton.configure(background='red', width=15)
         vista_principal.invocar()
 
     @staticmethod
-    def cerrar_aplicacion(ventana_raiz, vista_principal):
+    def cerrar_aplicacion(ventana_raiz):
         ''' Metodo para salir de la aplicación '''
         ventana_raiz.ventana.withdraw()
-        ventana1 = VTopLevel(ventana_raiz.ventana, "Salir del Sistema")
+        ventana1 = VTopLevel(ventana_raiz.ventana, 'Salir del Sistema')
         ventana1.ventana.geometry("280x93+500+200")
         ventana1.ventana.configure(background="white")
 
@@ -64,16 +162,16 @@ class VistaTkinter:
         boton1 = Boton(ventana=ventana1.ventana,
                        nombre="Sí", color="white",
                        evento=lambda: ventana1.salir()
-                       or ventana_raiz.salir()
-                       # or vista_principal.destroy()
-                       or sys.exit())
+                                      or ventana_raiz.salir()
+                                      # or vista_principal.destroy()
+                                      or sys.exit())
         boton1.invocar_pack("derecha")
         boton1.boton.configure(background='red', width=5)
 
         boton2 = Boton(ventana=ventana1.ventana,
                        nombre="No", color="black",
                        evento=lambda: ventana1.salir()
-                       or ventana_raiz.ventana.deiconify())
+                                      or ventana_raiz.ventana.deiconify())
         boton2.invocar_pack("izquierda")
         boton2.boton.configure(width=5)
 
@@ -97,7 +195,7 @@ class VTopLevel(Ventana):
     '''     Clase que representa la ventana tipo TopLevel, y hereda de Ventana'''
 
     def __init__(self, master, nombre):
-        self.ventana = Toplevel()
+        self.ventana = Toplevel(master=master)
         self.ventana.title(nombre)
 
     def invocar_pack(self, posicion="centro"):

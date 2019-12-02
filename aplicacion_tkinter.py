@@ -6,8 +6,7 @@ __status__ = "Prototype"
 
 from controlador import *
 from vista_tkinter import *
-from tkinter import *
-from vista_tkinter import *
+
 
 class Aplicacion:
     '''Clase destinada a la ejecucion de la aplicacion'''
@@ -15,7 +14,7 @@ class Aplicacion:
     @staticmethod
     def main():
         '''Punto de inicio del programa'''
-        datos = Controlador.inicializar()
+        Controlador.inicializar()
         VistaTkinter.menu_principal()
         # TODO persistir datos
 
