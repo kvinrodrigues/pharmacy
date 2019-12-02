@@ -1,5 +1,7 @@
 from tkinter import *
 import tkinter as tk
+import tkinter.messagebox as tkmsgbox
+
 from controlador import *
 
 
@@ -7,17 +9,8 @@ class VistaTkinter:
 
     @staticmethod
     def realizar_pedido(ventana_raiz):
-        articulos = VistaTkinter.seleccionar_articulos(ventana_raiz)
-        if articulos:
-            orden = Controlador.crear_orden(articulos)
-            # TODO mostrar mensaje de creacion de orden
-        else:
-            # raise Exception('Debe introducir por lo menos un articulo.')
-            pass
-
-    @staticmethod
-    def seleccionar_articulos(ventana_raiz):
-        ventana_hija = VTopLevel(ventana_raiz.ventana, '')
+        articulos_seleccionados = []
+        ventana_hija = VTopLevel(ventana_raiz.ventana, 'Realizar Pedido')
         ventana_hija.ventana.geometry("350x470+500+200")
         ventana_hija.ventana.configure(background='white')
         etiqueta_titulo = Etiqueta(ventana=ventana_hija.ventana,
@@ -30,22 +23,55 @@ class VistaTkinter:
         etiqueta_seleccion.invocar_pack()
         option_list = Controlador.obtener_categorias_articulos()
         # TODO crear clases propias para String var y optionmenu
-        variable = tk.StringVar(ventana_hija.ventana)
-        variable.set(option_list[0])
-        opt = tk.OptionMenu(ventana_hija.ventana, variable, *option_list)
-        opt.config(width=90, font=('Verdana', 12))
-        opt.pack(side="top")
+        indice_categoria = tk.StringVar(ventana_hija.ventana)
+        indice_categoria.set(option_list[0])
+        opcion_categoria = tk.OptionMenu(ventana_hija.ventana, indice_categoria, *option_list)
+        opcion_categoria.config(width=90, font=('Verdana', 12))
+        opcion_categoria.pack(side="top")
 
+        articulos_caja = CajaLista(ventana_hija.ventana)
+        articulos_caja.tamano(ancho=15, alto=6)
+
+        articulos = Controlador.obtener_articulos_por_categoria(int(indice_categoria.get()))
+        [articulos_caja.insertar(articulo) for articulo in
+         articulos]  # Se insertan los articulos de la categoria en la caja
         etiqueta_categoria = Etiqueta(ventana=ventana_hija.ventana,
-                                      nombre=Controlador.obtener_nombre_categoria(int(variable.get())), color="#0078D7",
+                                      nombre=Controlador.obtener_nombre_categoria(int(indice_categoria.get())).upper(),
+                                      color="#0078D7",
                                       fuente='Verdana', tamano=16)
+        boton_seleccion = Boton(ventana=ventana_hija.ventana,
+                                nombre="Lo quiero!", color="white",
+                                evento=lambda: articulos_seleccionados.append(articulos[articulos_caja.seleccionar()]))
+        boton_seleccion.boton.configure(background="#1ED760", width=9)
+
+        boton_finalizar = Boton(ventana=ventana_hija.ventana,
+                                nombre="Finalizar", color="white",
+                                evento=lambda: ventana_hija.salir()
+                                               or ventana_raiz.ventana.deiconify()
+                                               or crear_orden())
+        boton_finalizar.boton.configure(background="#3687DC", width=9)
         etiqueta_categoria.invocar_pack()
+        articulos_caja.invocar_pack()
+        boton_seleccion.invocar_pack()
+        boton_finalizar.invocar_pack('derecha')
+
 
         def callback(*args):
-            categoria_seleccionada = Controlador.obtener_nombre_categoria(int(variable.get()))
+            valor = int(indice_categoria.get())
+            categoria_seleccionada = (Controlador.obtener_nombre_categoria(valor)).upper()
+            articulos_categoria = Controlador.obtener_articulos_por_categoria(valor)
+            articulos_caja.limpiar()
+            [articulos_caja.insertar(art) for art in articulos_categoria]
             etiqueta_categoria.etiqueta.configure(text="{}".format(categoria_seleccionada))
 
-        variable.trace("w", callback)
+        def crear_orden():
+            try:
+                orden = Controlador.crear_orden(articulos_seleccionados)
+                VistaTkinter.info("Orden creada", str(orden))
+            except Exception as e:
+                VistaTkinter.error('Creacion de pedido', str(e))
+
+        indice_categoria.trace("w", callback)
 
     @staticmethod
     def desplegar_articulos(ventana_raiz):
@@ -102,6 +128,8 @@ class VistaTkinter:
     def menu_principal():
         ''' Metodo para el menu principal de la aplicacion '''
         vista_principal = Ventana('Principal')
+        # TODO cambiar para que funcione sin esto
+        vista_principal.ventana.withdraw()
 
         ventana_raiz = VTopLevel(vista_principal.ventana, 'Sistema de pedidos para farmacias')
         ventana_raiz.ventana.geometry("384x320+500+200")
@@ -136,8 +164,8 @@ class VistaTkinter:
 
         boton_salir = Boton(ventana=ventana_raiz.ventana,
                             nombre="Salir", color="white",
-                            evento=lambda: VistaTkinter.cerrar_aplicacion(
-                                ventana_raiz))
+                            evento=lambda: Controlador.guardar_nuevos_datos(Controlador.farmacia) or
+                                           VistaTkinter.cerrar_aplicacion(ventana_raiz))
         boton_salir.invocar_pack()
         boton_salir.boton.configure(background='red', width=15)
         vista_principal.invocar()
@@ -174,6 +202,57 @@ class VistaTkinter:
                                       or ventana_raiz.ventana.deiconify())
         boton2.invocar_pack("izquierda")
         boton2.boton.configure(width=5)
+
+    @staticmethod
+    def error(titulo, subtitulo):
+        '''     Método para la impresión de errores '''
+        popup_error1 = PopupError(titulo, subtitulo)
+
+    @staticmethod
+    def info(titulo, subtitulo):
+        '''     Método para la impresión de informaciones '''
+        popup_info = PopupInfo(titulo, subtitulo)
+
+
+class CajaLista():
+    '''     Clase que representa las cajas de lista de Tkinter (Listbox) '''
+
+    def __init__(self, ventana):
+        self.caja = Listbox(ventana, exportselection=False)
+
+    def tamano(self, ancho, alto):
+        self.caja.configure(width=ancho, height=alto)
+
+    def agregar_barra(self, BarraScroll):
+        self.caja.configure(yscrollcommand=BarraScroll.set)
+
+    def insertar(self, item):
+        self.caja.insert(END, item)
+
+    def limpiar(self):
+        self.caja.delete(0, tk.END)
+
+    def seleccionar(self):
+        # Se almacena una tupla con la seleccion actual
+        seleccion = self.caja.curselection()
+        # Se retorna solamente la primera posicion si existe
+        if len(seleccion) == 1:
+            return seleccion[0]
+
+    def invocar_place(self, pos_x=100, pos_y=100):
+        self.caja.place(x=pos_x, y=pos_y)
+
+    def invocar_grid(self, fila=0, columna=0, comb_fila=1, comb_columna=1):
+        self.caja.grid(row=fila, column=columna,
+                       rowspan=comb_fila, columnspan=comb_columna)
+
+    def invocar_pack(self, posicion="centro"):
+        if posicion == "centro":
+            self.caja.pack()
+        elif posicion == "derecha":
+            self.caja.pack(side=RIGHT)
+        elif posicion == "izquierda":
+            self.caja.pack(side=LEFT)
 
 
 class Ventana():
@@ -276,3 +355,17 @@ class Etiqueta():
             self.etiqueta.pack(side=RIGHT)
         elif posicion == "izquierda":
             self.etiqueta.pack(side=LEFT)
+
+
+class PopupError():
+    ''' Clase que representa los Popups de Error de Tkinter '''
+
+    def __init__(self, titulo, subtitulo):
+        self.popup_error = tkmsgbox.showerror(titulo, subtitulo)
+
+
+class PopupInfo():
+    ''' Clase que representa los Popups de Informacion de Tkinter '''
+
+    def __init__(self, titulo, subtitulo):
+        self.popup_error = tkmsgbox.showinfo(titulo, subtitulo)

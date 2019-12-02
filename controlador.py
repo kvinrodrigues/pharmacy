@@ -70,6 +70,8 @@ class Controlador:
         ''' Metodo para realizar la creacion del pedido 
             mediante una orden dentro del sistema 
         '''
+        if not articulos:
+            raise Exception('Debe introducir al menos un articulo') # TODO verificar que no afecta a la vista en consola
         numero_orden = len(Controlador.farmacia.ordenes)
         orden = Controlador.farmacia.realizar_pedido(numero_orden, articulos)
         return orden
@@ -125,7 +127,6 @@ class Controlador:
         ''' Metodo que retorna los articulos disponibles en la categoria introducida,
             se lanza una excepcion caso que no se encuentre el articulo
         '''
-        articulos = []
         try:
             articulos_categorizados = Controlador.filtrar_articulos()
             articulos = articulos_categorizados[categoria]

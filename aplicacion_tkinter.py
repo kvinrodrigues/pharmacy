@@ -16,8 +16,6 @@ class Aplicacion:
         '''Punto de inicio del programa'''
         Controlador.inicializar()
         VistaTkinter.menu_principal()
-        # TODO persistir datos
-
 
 if __name__ == '__main__':
     Aplicacion.main()
