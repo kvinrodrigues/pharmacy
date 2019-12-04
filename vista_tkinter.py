@@ -11,7 +11,7 @@ class VistaTkinter:
     def realizar_pedido(ventana_raiz):
         articulos_seleccionados = []
         ventana_hija = VTopLevel(ventana_raiz.ventana, 'Realizar Pedido')
-        ventana_hija.ventana.geometry("350x470+500+200")
+        ventana_hija.ventana.geometry("350x300+500+222")
         ventana_hija.ventana.configure(background='white')
         etiqueta_titulo = Etiqueta(ventana=ventana_hija.ventana,
                                    nombre="Realizar Pedido", color="#0078D7",
@@ -49,12 +49,18 @@ class VistaTkinter:
                                 evento=lambda: ventana_hija.salir()
                                                or ventana_raiz.ventana.deiconify()
                                                or crear_orden())
+        boton_volver = Boton(ventana=ventana_hija.ventana,
+                             nombre="Volver", color="white",
+                             evento=lambda: ventana_hija.salir()
+                                            or ventana_raiz.ventana.deiconify())
+        boton_volver.boton.configure(background='#FE8738', width=8)
+
         boton_finalizar.boton.configure(background="#3687DC", width=9)
         etiqueta_categoria.invocar_pack()
         articulos_caja.invocar_pack()
         boton_seleccion.invocar_pack()
+        boton_volver.invocar_pack("izquierda")
         boton_finalizar.invocar_pack('derecha')
-
 
         def callback(*args):
             valor = int(indice_categoria.get())
@@ -74,6 +80,46 @@ class VistaTkinter:
         indice_categoria.trace("w", callback)
 
     @staticmethod
+    def realizar_cobro(ventana_raiz):
+        ventana_hija = VTopLevel(ventana_raiz.ventana, "Realizar cobro")
+        ventana_hija.ventana.geometry("384x162+500+200")
+        ventana_hija.ventana.configure(background='white')
+        etiqueta_titulo = Etiqueta(ventana=ventana_hija.ventana,
+                                   nombre="Cobro de Pedido\n", color="#0078D7",
+                                   fuente='Verdana', tamano=16)
+        etiqueta_titulo.invocar_pack()
+
+        etiqueta_entrada_ci = Etiqueta(ventana=ventana_hija.ventana,
+                                       nombre='Ingrese numero de cedula del cliente', color="black",
+                                       fuente='Verdana', tamano=10)
+        etiqueta_entrada_ci.invocar_pack()
+
+        cedula_identidad = StringVar(ventana_hija.ventana)
+
+        etiqueta_cedula_identidad = Etiqueta(ventana=ventana_hija.ventana,
+                                             nombre="CI: ", color="black",
+                                             fuente='Arial', tamano=10)
+        etiqueta_cedula_identidad.invocar_pack()
+
+        caja_txt_cedula_identidad = CajaTexto(ventana=ventana_hija.ventana, variable=cedula_identidad)
+        caja_txt_cedula_identidad.invocar_pack()
+
+        boton_siguiente = Boton(ventana=ventana_hija.ventana,
+                                nombre="Siguiente", color="white",
+                                evento=lambda: print('boton siguiente TODO implementar')
+                                               or ventana_hija.salir())
+
+        boton_siguiente.invocar_pack("derecha")
+        boton_siguiente.boton.configure(background="#1ED760", width=9)
+
+        boton_salir = Boton(ventana=ventana_hija.ventana,
+                            nombre="Volver", color="white",
+                            evento=lambda: ventana_hija.salir()
+                                           or ventana_raiz.ventana.deiconify())
+        boton_salir.invocar_pack("izquierda")
+        boton_salir.boton.configure(background='#FE8738', width=8)
+
+    @staticmethod
     def desplegar_articulos(ventana_raiz):
         articulos_categorizados = Controlador.filtrar_articulos()
         articulos_higiene = articulos_categorizados[utiles.KEY_HIGIENE]
@@ -81,7 +127,7 @@ class VistaTkinter:
         articulos_medicamento = articulos_categorizados[utiles.KEY_MEDICAMENTO]
         articulos_belleza = articulos_categorizados[utiles.KEY_BELLEZA]
         if not Controlador.farmacia_existen_articulos():
-            mensaje = "Farmacia sin articulos"
+            VistaTkinter.error('Error', 'Sin stock, regrese mas tarde.')
         else:
             mensaje = ('--- MEDICAMENTOS: --- \n')
             for medicamento in articulos_medicamento:
@@ -114,6 +160,116 @@ class VistaTkinter:
         boton1 = Boton(ventana=ventana1.ventana,
                        nombre="OK", color="white",
                        evento=lambda: ventana1.salir()
+                                      or ventana_raiz.ventana.deiconify())
+        boton1.invocar_pack("centro")
+        boton1.boton.configure(background="#3687DC", width=9)
+
+    @staticmethod
+    def obtener_informes(ventana_raiz):
+        ventana_hija = VTopLevel(ventana_raiz.ventana, 'Generacion de informes')
+        ventana_hija.ventana.geometry("450x260+500+200")
+        ventana_hija.ventana.configure(background='white')
+
+        etiqueta_titulo = Etiqueta(ventana=ventana_hija.ventana,
+                                   nombre="Informe de ganancias", color="#0078D7",
+                                   fuente='Verdana', tamano=16)
+        etiqueta_titulo.invocar_pack()
+
+        anio = StringVar(ventana_hija.ventana)
+        mes = StringVar(ventana_hija.ventana)
+        semana = StringVar(ventana_hija.ventana)
+        dia = StringVar(ventana_hija.ventana)
+
+        etiqueta_anio = Etiqueta(ventana=ventana_hija.ventana,
+                                 nombre="Anio: ", color="#0078D7",
+                                 fuente='Verdana', tamano=8)
+        etiqueta_mes = Etiqueta(ventana=ventana_hija.ventana,
+                                nombre="Mes", color="#0078D7",
+                                fuente='Verdana', tamano=8)
+        etiqueta_semana = Etiqueta(ventana=ventana_hija.ventana,
+                                   nombre="Semana", color="#0078D7",
+                                   fuente='Verdana', tamano=8)
+        etiqueta_dia = Etiqueta(ventana=ventana_hija.ventana,
+                                nombre="Dia", color="#0078D7",
+                                fuente='Verdana', tamano=8)
+
+        caja_anio = CajaTexto(ventana=ventana_hija.ventana, variable=anio)
+        caja_mes = CajaTexto(ventana=ventana_hija.ventana, variable=mes)
+        caja_semana = CajaTexto(ventana=ventana_hija.ventana, variable=semana)
+        caja_dia = CajaTexto(ventana=ventana_hija.ventana, variable=dia)
+
+        etiqueta_anio.invocar_pack()
+        caja_anio.invocar_pack()
+        VistaTkinter.agregar_espaciado(ventana_hija)
+        etiqueta_mes.invocar_pack()
+        caja_mes.invocar_pack()
+        VistaTkinter.agregar_espaciado(ventana_hija)
+        etiqueta_semana.invocar_pack()
+        caja_semana.invocar_pack()
+        VistaTkinter.agregar_espaciado(ventana_hija)
+        etiqueta_dia.invocar_pack()
+        caja_dia.invocar_pack()
+
+        boton_salir = Boton(ventana=ventana_hija.ventana,
+                            nombre="Volver", color="white",
+                            evento=lambda: ventana_hija.salir()
+                                           or ventana_raiz.ventana.deiconify())
+        boton_salir.invocar_pack("izquierda")
+        boton_salir.boton.configure(background='#FE8738', width=9)
+        # VistaTkinter.visualizar_informe(ventana_raiz, anio, mes, semana, dia)
+        boton_siguiente = Boton(ventana=ventana_hija.ventana,
+                                nombre="Siguiente", color="white",
+                                evento=lambda: VistaTkinter.obtener_informe(ventana_raiz, anio.get(), mes.get(),
+                                                                            semana.get(), dia.get())
+                                               or ventana_hija.salir())
+
+        boton_siguiente.invocar_pack("derecha")
+        boton_siguiente.boton.configure(background="#1ED760", width=9)
+
+    @staticmethod
+    def obtener_informe(ventana_raiz, anio, mes, semana, dia):
+        mensaje = None
+        if anio and anio.isdigit():
+            anio = int(anio)
+            if mes and mes.isdigit():
+                mes = int(mes)
+                if semana and semana.isdigit():
+                    semana = int(semana)
+                    mensaje = Controlador.filtrar_comprobantes(
+                        Controlador.definicion_filtro_comprobante_semanal(anio, mes, semana))
+                elif dia and dia.isdigit():
+                    dia = int(dia)
+                    mensaje = Controlador.filtrar_comprobantes(
+                        Controlador.definicion_filtro_comprobante_diario(anio, mes, dia))
+                else:
+                    mensaje = Controlador.filtrar_comprobantes(
+                        Controlador.definicion_filtro_comprobante_mensual(anio, mes))
+            else:
+                mensaje = Controlador.filtrar_comprobantes(Controlador.definicion_filtro_comprobante_anual(anio))
+        else:
+            VistaTkinter.error('Entrada Invalida', 'Debe introducir el anio, obligatoriamente para realizar el filtro')
+        if mensaje:
+            VistaTkinter.visualizar_informe(ventana_raiz, mensaje)
+
+    @staticmethod
+    def visualizar_informe(ventana_raiz, mensaje):
+        ventana_hija = VTopLevel(ventana_raiz.ventana, 'Articulos Disponibles')
+        ventana_hija.ventana.geometry("350x470+500+200")
+        ventana_hija.ventana.configure(background='white')
+
+        etiqueta_titulo = Etiqueta(ventana=ventana_hija.ventana,
+                                   nombre="Informe", color="#0078D7",
+                                   fuente='Verdana', tamano=16)
+        etiqueta_titulo.invocar_pack()
+
+        etiqueta_report = Etiqueta(ventana=ventana_hija.ventana,
+                                   nombre=mensaje, color="black",
+                                   fuente='Verdana', tamano=10)
+        etiqueta_report.invocar_pack()
+
+        boton1 = Boton(ventana=ventana_hija.ventana,
+                       nombre="OK", color="white",
+                       evento=lambda: ventana_hija.salir()
                                       or ventana_raiz.ventana.deiconify())
         boton1.invocar_pack("centro")
         boton1.boton.configure(background="#3687DC", width=9)
@@ -153,12 +309,30 @@ class VistaTkinter:
 
         VistaTkinter.agregar_espaciado(ventana_raiz)
 
+        boton_realizar_cobro = Boton(ventana=ventana_raiz.ventana,
+                                     nombre="Realizar cobro", color="black",
+                                     evento=lambda: VistaTkinter.realizar_cobro(ventana_raiz))
+
+        boton_realizar_cobro.invocar_pack()
+        boton_realizar_cobro.boton.configure(width=15)
+
+        VistaTkinter.agregar_espaciado(ventana_raiz)
+
         boton_ver_articulos = Boton(ventana=ventana_raiz.ventana,
                                     nombre="Listar Articulos", color="black",
                                     evento=lambda: VistaTkinter.desplegar_articulos(ventana_raiz))
 
         boton_ver_articulos.invocar_pack()
         boton_ver_articulos.boton.configure(width=15)
+
+        VistaTkinter.agregar_espaciado(ventana_raiz)
+
+        boton_informes = Boton(ventana=ventana_raiz.ventana,
+                               nombre="Obtener Informes", color="black",
+                               evento=lambda: VistaTkinter.obtener_informes(ventana_raiz))
+
+        boton_informes.invocar_pack()
+        boton_informes.boton.configure(width=15)
 
         VistaTkinter.agregar_espaciado(ventana_raiz)
 
@@ -369,3 +543,25 @@ class PopupInfo():
 
     def __init__(self, titulo, subtitulo):
         self.popup_error = tkmsgbox.showinfo(titulo, subtitulo)
+
+
+class CajaTexto():
+    ''' Clase que representa las cajas de texto de Tkinter (Entry) '''
+
+    def __init__(self, ventana, variable):
+        self.CajaTexto = Entry(ventana, textvariable=variable, background="light gray")
+
+    def invocar_place(self, pos_x=100, pos_y=100):
+        self.CajaTexto.place(x=pos_x, y=pos_y)
+
+    def invocar_grid(self, fila=0, columna=0, comb_fila=1, comb_columna=1):
+        self.CajaTexto.grid(row=fila, column=columna,
+                            rowspan=comb_fila, columnspan=comb_columna)
+
+    def invocar_pack(self, posicion="centro"):
+        if posicion == "centro":
+            self.CajaTexto.pack()
+        elif posicion == "derecha":
+            self.CajaTexto.pack(side=RIGHT)
+        elif posicion == "izquierda":
+            self.CajaTexto.pack(side=LEFT)
