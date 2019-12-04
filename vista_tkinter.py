@@ -81,6 +81,9 @@ class VistaTkinter:
 
     @staticmethod
     def realizar_cobro(ventana_raiz):
+        orden = None
+        cliente = None
+        medio_pago = None
         ventana_hija = VTopLevel(ventana_raiz.ventana, "Realizar cobro")
         ventana_hija.ventana.geometry("384x162+500+200")
         ventana_hija.ventana.configure(background='white')
@@ -89,24 +92,23 @@ class VistaTkinter:
                                    fuente='Verdana', tamano=16)
         etiqueta_titulo.invocar_pack()
 
-        etiqueta_entrada_ci = Etiqueta(ventana=ventana_hija.ventana,
-                                       nombre='Ingrese numero de cedula del cliente', color="black",
-                                       fuente='Verdana', tamano=10)
-        etiqueta_entrada_ci.invocar_pack()
+        etiqueta_entrada_nro_orden = Etiqueta(ventana=ventana_hija.ventana,
+                                              nombre='Ingrese numero de orden del pedido', color="black",
+                                              fuente='Verdana', tamano=10)
+        etiqueta_entrada_nro_orden.invocar_pack()
 
-        cedula_identidad = StringVar(ventana_hija.ventana)
+        numero_orden = StringVar(ventana_hija.ventana)
 
-        etiqueta_cedula_identidad = Etiqueta(ventana=ventana_hija.ventana,
-                                             nombre="CI: ", color="black",
-                                             fuente='Arial', tamano=10)
-        etiqueta_cedula_identidad.invocar_pack()
+        etiqueta_numero_orden = Etiqueta(ventana=ventana_hija.ventana,
+                                         nombre="Nro de orden: ", color="black",
+                                         fuente='Arial', tamano=8)
+        etiqueta_numero_orden.invocar_pack()
 
-        caja_txt_cedula_identidad = CajaTexto(ventana=ventana_hija.ventana, variable=cedula_identidad)
-        caja_txt_cedula_identidad.invocar_pack()
-
+        caja_txt_numero_orden = CajaTexto(ventana=ventana_hija.ventana, variable=numero_orden)
+        caja_txt_numero_orden.invocar_pack()
         boton_siguiente = Boton(ventana=ventana_hija.ventana,
                                 nombre="Siguiente", color="white",
-                                evento=lambda: print('boton siguiente TODO implementar')
+                                evento=lambda: validar_nro_orden()
                                                or ventana_hija.salir())
 
         boton_siguiente.invocar_pack("derecha")
@@ -119,6 +121,107 @@ class VistaTkinter:
         boton_salir.invocar_pack("izquierda")
         boton_salir.boton.configure(background='#FE8738', width=8)
 
+        def validar_nro_orden():
+            try:
+                nonlocal orden
+                orden = Controlador.buscar_orden(
+                    int(numero_orden.get()), utiles.ESTADO_PENDIENTE)
+                vista_introducir_cedula()
+            except Exception as e:
+                VistaTkinter.error('Error de entrada', str(e))
+
+        def vista_introducir_cedula():
+            ventana_hija = VTopLevel(ventana_raiz.ventana, "Introducir numero de cedula")
+            ventana_hija.ventana.geometry("384x162+500+200")
+            ventana_hija.ventana.configure(background='white')
+
+            etiqueta_entrada_nro_ci = Etiqueta(ventana=ventana_hija.ventana,
+                                                  nombre='Ingrese numero de cedula', color="black",
+                                                  fuente='Verdana', tamano=10)
+            etiqueta_entrada_nro_ci.invocar_pack()
+
+            cedula_identidad = StringVar(ventana_hija.ventana)
+
+            etiqueta_cedula_identidad = Etiqueta(ventana=ventana_hija.ventana,
+                                             nombre="Cedula de identidad: ", color="black",
+                                             fuente='Arial', tamano=8)
+            etiqueta_cedula_identidad.invocar_pack()
+
+            caja_txt_cedula_identidad = CajaTexto(ventana=ventana_hija.ventana, variable=cedula_identidad)
+            caja_txt_cedula_identidad.invocar_pack()
+            boton_siguiente = Boton(ventana=ventana_hija.ventana,
+                                    nombre="Siguiente", color="white",
+                                    evento=lambda: validar_cliente(cedula_identidad.get())
+                                                   or ventana_hija.salir())
+
+            boton_siguiente.invocar_pack("derecha")
+            boton_siguiente.boton.configure(background="#1ED760", width=9)
+
+            boton_salir = Boton(ventana=ventana_hija.ventana,
+                                nombre="Volver", color="white",
+                                evento=lambda: ventana_hija.salir()
+                                               or ventana_raiz.ventana.deiconify())
+            boton_salir.invocar_pack("izquierda")
+            boton_salir.boton.configure(background='#FE8738', width=8)
+
+        def validar_cliente(cedula):
+            nonlocal cliente
+            cliente = Controlador.buscar_cliente(cedula)
+            if not cliente:
+                seleccionar_o_crear_cliente(cedula)
+
+        # TODO ver si se puede simplificar en un solo metodo junto con el de saalir del sistema
+        def seleccionar_o_crear_cliente(cedula):
+            ventana_hija = VTopLevel(ventana_raiz.ventana, 'Seleccion de opcion')
+            ventana_hija.ventana.geometry("280x93+500+200")
+            ventana_hija.ventana.configure(background="white")
+
+            VistaTkinter.agregar_espaciado(ventana_raiz)
+
+            etiqueta_texto = Etiqueta(ventana=ventana_hija.ventana,
+                                nombre="Desea crear el cliente {}?".format(cedula), color="black",
+                                fuente='Arial', tamano=10)
+            etiqueta_texto.invocar_pack()
+
+            VistaTkinter.agregar_espaciado(ventana_raiz)
+
+            boton1 = Boton(ventana=ventana_hija.ventana,
+                        nombre="Sí", color="white",
+                        evento=lambda: registrar_cliente(cedula)
+                                        or ventana_hija.salir())
+            boton1.invocar_pack("derecha")
+            boton1.boton.configure(background='red', width=5)
+
+            boton2 = Boton(ventana=ventana_hija.ventana,
+                        nombre="No", color="black",
+                        evento=lambda: asignar_cliente_defecto() 
+                                        or seleccionar_metodo_pago()
+                                        or ventana_hija.salir())
+            boton2.invocar_pack("izquierda")
+            boton2.boton.configure(width=5)
+        
+        def asignar_cliente_defecto():
+            nonlocal cliente
+            cliente = Controlador.obtener_cliente_por_defecto()
+            
+        def registrar_cliente(cedula): 
+            print('Implementar creacion de cliente')
+            pass
+        
+        def seleccionar_metodo_pago():
+            print('implementar seleccion de metodo de pago')
+            # TODO debe haber un boton de siguiente, alli realizar la creacion
+            nonlocal medio_pago
+            medio_pago = Efectivo('efectivo de prueba', 'prueba')   
+            comprobante = Controlador.crear_comprobante(
+                orden, medio_pago, cliente)
+            cliente.facturas.append(comprobante)
+            orden.estado = utiles.ESTADO_PAGADO
+            Controlador.guardar_comprobante(comprobante)
+            print('Cobro realizado con exito: ')
+            print(str(comprobante))
+            
+            
     @staticmethod
     def desplegar_articulos(ventana_raiz):
         articulos_categorizados = Controlador.filtrar_articulos()
@@ -216,7 +319,6 @@ class VistaTkinter:
                                            or ventana_raiz.ventana.deiconify())
         boton_salir.invocar_pack("izquierda")
         boton_salir.boton.configure(background='#FE8738', width=9)
-        # VistaTkinter.visualizar_informe(ventana_raiz, anio, mes, semana, dia)
         boton_siguiente = Boton(ventana=ventana_hija.ventana,
                                 nombre="Siguiente", color="white",
                                 evento=lambda: VistaTkinter.obtener_informe(ventana_raiz, anio.get(), mes.get(),
@@ -254,7 +356,7 @@ class VistaTkinter:
     @staticmethod
     def visualizar_informe(ventana_raiz, mensaje):
         ventana_hija = VTopLevel(ventana_raiz.ventana, 'Articulos Disponibles')
-        ventana_hija.ventana.geometry("350x470+500+200")
+        ventana_hija.ventana.geometry("384x320+500+200")
         ventana_hija.ventana.configure(background='white')
 
         etiqueta_titulo = Etiqueta(ventana=ventana_hija.ventana,
