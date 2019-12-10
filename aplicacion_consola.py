@@ -20,8 +20,8 @@ class Aplicacion:
     @staticmethod
     def salir():
         '''Cierra la aplicación'''
-        Vista_Consola.limpiar_pantalla()
-        Vista_Consola.cerrar_aplicacion()
+        VistaConsola.limpiar_pantalla()
+        VistaConsola.cerrar_aplicacion()
 
 
 class Menu:
@@ -30,20 +30,20 @@ class Menu:
     def menu_principal():
         ''' Metodo que contiene la parte funcional del menu principal de la aplicación '''
         menus = {0: ('Salir', lambda: Aplicacion.salir()),
-                 1: ('Realizar pedido', lambda: Vista_Consola.realizar_pedido()),
-                 2: ('Cobrar Pedido', lambda: Vista_Consola.cobrar_pedido()),
-                 3: ('Listar Articulos', lambda: Vista_Consola.desplegar_articulos()),
-                 4: ('Gestionar Informe', lambda: Vista_Consola.gestionar_informe())
+                 1: ('Realizar pedido', lambda: VistaConsola.realizar_pedido()),
+                 2: ('Cobrar Pedido', lambda: VistaConsola.cobrar_pedido()),
+                 3: ('Listar Articulos', lambda: VistaConsola.desplegar_articulos()),
+                 4: ('Gestionar Informe', lambda: VistaConsola.gestionar_informe())
                  }
 
         while(True):
-            opcion_menu = Vista_Consola.menu_principal()
+            opcion_menu = VistaConsola.menu_principal()
             try:
                 opcion = menus[opcion_menu]
                 utiles.realizar(opcion[1])
             except KeyError:
-                Vista_Consola.error_menu()
-                Vista_Consola.pausa()
+                VistaConsola.error_menu()
+                VistaConsola.pausa()
 
             Controlador.guardar_nuevos_datos(Controlador.farmacia)
 

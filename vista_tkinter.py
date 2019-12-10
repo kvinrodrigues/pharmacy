@@ -1,12 +1,22 @@
+__author__ = "Kevin Samuel Rodrigues Toledo"
+__license__ = "Public Domain"
+__version__ = "1.0.0"
+__email__ = "kevin.rodrigues@fpuna.edu.py"
+__status__ = "Prototype"
+
+'''
+    Sistema de Pedidos en Farmacias
+
+'''
+
 from tkinter import *
 import tkinter as tk
 import tkinter.messagebox as tkmsgbox
-
 from controlador import *
 
 
 class VistaTkinter:
-
+    ''' Clase que representa la vista de la aplicacion mediante una interfaz grafica '''
     @staticmethod
     def realizar_pedido(ventana_raiz):
         articulos_seleccionados = []
@@ -22,7 +32,6 @@ class VistaTkinter:
         etiqueta_titulo.invocar_pack()
         etiqueta_seleccion.invocar_pack()
         option_list = Controlador.obtener_categorias_articulos()
-        # TODO crear clases propias para String var y optionmenu
         indice_categoria = tk.StringVar(ventana_hija.ventana)
         indice_categoria.set(option_list[0])
         opcion_categoria = tk.OptionMenu(
@@ -180,7 +189,6 @@ class VistaTkinter:
             if not cliente:
                 seleccionar_o_crear_cliente(cedula)
 
-        # TODO ver si se puede simplificar en un solo metodo junto con el de saalir del sistema
         def seleccionar_o_crear_cliente(cedula):
             ventana_hija = VTopLevel(
                 ventana_raiz.ventana, 'Seleccion de opcion')
@@ -216,51 +224,53 @@ class VistaTkinter:
             cliente = Controlador.obtener_cliente_por_defecto()
 
         def registrar_cliente(cedula):
-            print('Implementar creacion de cliente')
             ventana_hija = VTopLevel(ventana_raiz.ventana,
-                                 'Generacion de informes')
+                                     'Generacion de informes')
             ventana_hija.ventana.geometry("450x260+500+200")
             ventana_hija.ventana.configure(background='white')
 
             etiqueta_titulo = Etiqueta(ventana=ventana_hija.ventana,
-                                    nombre="Registrar cliente", color="#0078D7",
-                                    fuente='Verdana', tamano=16)
+                                       nombre="Registrar cliente", color="#0078D7",
+                                       fuente='Verdana', tamano=16)
             etiqueta_titulo.invocar_pack()
 
-            anio = StringVar(ventana_hija.ventana)
-            mes = StringVar(ventana_hija.ventana)
-            semana = StringVar(ventana_hija.ventana)
-            dia = StringVar(ventana_hija.ventana)
+            nombres = StringVar(ventana_hija.ventana)
+            apellidos = StringVar(ventana_hija.ventana)
+            direccion = StringVar(ventana_hija.ventana)
+            ruc = StringVar(ventana_hija.ventana)
 
-            etiqueta_anio = Etiqueta(ventana=ventana_hija.ventana,
-                                    nombre="Anio: ", color="#0078D7",
-                                    fuente='Verdana', tamano=8)
-            etiqueta_mes = Etiqueta(ventana=ventana_hija.ventana,
-                                    nombre="Mes", color="#0078D7",
-                                    fuente='Verdana', tamano=8)
-            etiqueta_semana = Etiqueta(ventana=ventana_hija.ventana,
-                                    nombre="Semana", color="#0078D7",
-                                    fuente='Verdana', tamano=8)
-            etiqueta_dia = Etiqueta(ventana=ventana_hija.ventana,
-                                    nombre="Dia", color="#0078D7",
+            etiqueta_nombres = Etiqueta(ventana=ventana_hija.ventana,
+                                        nombre="Nombres: ", color="#0078D7",
+                                        fuente='Verdana', tamano=8)
+            etiqueta_apellidos = Etiqueta(ventana=ventana_hija.ventana,
+                                          nombre="Apellidos", color="#0078D7",
+                                          fuente='Verdana', tamano=8)
+            etiqueta_direccion = Etiqueta(ventana=ventana_hija.ventana,
+                                          nombre="Direccion", color="#0078D7",
+                                          fuente='Verdana', tamano=8)
+            etiqueta_ruc = Etiqueta(ventana=ventana_hija.ventana,
+                                    nombre="Ruc", color="#0078D7",
                                     fuente='Verdana', tamano=8)
 
-            caja_anio = CajaTexto(ventana=ventana_hija.ventana, variable=anio)
-            caja_mes = CajaTexto(ventana=ventana_hija.ventana, variable=mes)
-            caja_semana = CajaTexto(ventana=ventana_hija.ventana, variable=semana)
-            caja_dia = CajaTexto(ventana=ventana_hija.ventana, variable=dia)
+            caja_nombres = CajaTexto(
+                ventana=ventana_hija.ventana, variable=nombres)
+            caja_apellidos = CajaTexto(
+                ventana=ventana_hija.ventana, variable=apellidos)
+            caja_direccion = CajaTexto(
+                ventana=ventana_hija.ventana, variable=direccion)
+            caja_ruc = CajaTexto(ventana=ventana_hija.ventana, variable=ruc)
 
-            etiqueta_anio.invocar_pack()
-            caja_anio.invocar_pack()
+            etiqueta_nombres.invocar_pack()
+            caja_nombres.invocar_pack()
             VistaTkinter.agregar_espaciado(ventana_hija)
-            etiqueta_mes.invocar_pack()
-            caja_mes.invocar_pack()
+            etiqueta_apellidos.invocar_pack()
+            caja_apellidos.invocar_pack()
             VistaTkinter.agregar_espaciado(ventana_hija)
-            etiqueta_semana.invocar_pack()
-            caja_semana.invocar_pack()
+            etiqueta_direccion.invocar_pack()
+            caja_direccion.invocar_pack()
             VistaTkinter.agregar_espaciado(ventana_hija)
-            etiqueta_dia.invocar_pack()
-            caja_dia.invocar_pack()
+            etiqueta_ruc.invocar_pack()
+            caja_ruc.invocar_pack()
 
             boton_salir = Boton(ventana=ventana_hija.ventana,
                                 nombre="Volver", color="white",
@@ -270,8 +280,9 @@ class VistaTkinter:
             boton_salir.boton.configure(background='#FE8738', width=9)
             boton_siguiente = Boton(ventana=ventana_hija.ventana,
                                     nombre="Siguiente", color="white",
-                                    evento=lambda: VistaTkinter.obtener_informe(ventana_raiz, anio.get(), mes.get(),
-                                                                                semana.get(), dia.get())
+                                    evento=lambda: seleccionar_metodo_pago() or
+                                    establecer_cliente(cedula, nombres.get(
+                                    ), apellidos.get(), direccion.get(), ruc.get())
                                     or ventana_hija.salir())
 
             boton_siguiente.invocar_pack("derecha")
@@ -310,6 +321,13 @@ class VistaTkinter:
             nonlocal medio_pago
             medio_pago = metodo_pago
             realizar_cobro()
+
+        def establecer_cliente(cedula, nombre, apellido, direccion, ruc):
+            nonlocal cliente
+            persona = Persona(Email(''), cedula, nombre,
+                              apellido, direccion, ruc)
+            cliente = Cliente(persona)
+            print('cliente: ' + str(cliente))
 
         def realizar_cobro():
             nonlocal orden, medio_pago, cliente
@@ -367,7 +385,6 @@ class VistaTkinter:
 
     @staticmethod
     def obtener_informes(ventana_raiz):
-        # TODO probar el informe semanal
         ventana_hija = VTopLevel(ventana_raiz.ventana,
                                  'Generacion de informes')
         ventana_hija.ventana.geometry("450x260+500+200")
@@ -457,6 +474,7 @@ class VistaTkinter:
 
     @staticmethod
     def visualizar_informe(ventana_raiz, mensaje):
+        ''' Metodo para visualizar el informe de acuerdo al mensaje recibido '''
         ventana_hija = VTopLevel(ventana_raiz.ventana, 'Articulos Disponibles')
         ventana_hija.ventana.geometry("384x320+500+200")
         ventana_hija.ventana.configure(background='white')
@@ -480,6 +498,7 @@ class VistaTkinter:
 
     @staticmethod
     def agregar_espaciado(ventana_raiz):
+        ''' Metodo encargado de agregar una etiqueta con espaciado en blanco '''
         (Etiqueta(ventana=ventana_raiz.ventana,
                   nombre="", color="black",
                   fuente='Arial', tamano=6)).invocar_pack()
@@ -488,7 +507,6 @@ class VistaTkinter:
     def menu_principal():
         ''' Metodo para el menu principal de la aplicacion '''
         vista_principal = Ventana('Principal')
-        # TODO cambiar para que funcione sin esto
         vista_principal.ventana.withdraw()
 
         ventana_raiz = VTopLevel(
@@ -540,7 +558,6 @@ class VistaTkinter:
         boton_informes.boton.configure(width=15)
 
         VistaTkinter.agregar_espaciado(ventana_raiz)
-        # TODO se debe guardar igual aunque no se de al boton salir
         boton_salir = Boton(ventana=ventana_raiz.ventana,
                             nombre="Salir", color="white",
                             evento=lambda: Controlador.guardar_nuevos_datos(Controlador.farmacia) or
@@ -646,6 +663,7 @@ class Ventana():
         self.ventana.mainloop()
 
     def salir(self):
+        Controlador.guardar_nuevos_datos(Controlador.farmacia)
         self.ventana.destroy()
 
 
