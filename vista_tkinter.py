@@ -226,7 +226,7 @@ class VistaTkinter:
         def registrar_cliente(cedula):
             ventana_hija = VTopLevel(ventana_raiz.ventana,
                                      'Generacion de informes')
-            ventana_hija.ventana.geometry("450x260+500+200")
+            ventana_hija.ventana.geometry("400x510+500+200")
             ventana_hija.ventana.configure(background='white')
 
             etiqueta_titulo = Etiqueta(ventana=ventana_hija.ventana,
@@ -238,6 +238,9 @@ class VistaTkinter:
             apellidos = StringVar(ventana_hija.ventana)
             direccion = StringVar(ventana_hija.ventana)
             ruc = StringVar(ventana_hija.ventana)
+            email = StringVar(ventana_hija.ventana)
+            prefijo = StringVar(ventana_hija.ventana)
+            telefono = StringVar(ventana_hija.ventana)
 
             etiqueta_nombres = Etiqueta(ventana=ventana_hija.ventana,
                                         nombre="Nombres: ", color="#0078D7",
@@ -251,6 +254,15 @@ class VistaTkinter:
             etiqueta_ruc = Etiqueta(ventana=ventana_hija.ventana,
                                     nombre="Ruc", color="#0078D7",
                                     fuente='Verdana', tamano=8)
+            etiqueta_email = Etiqueta(ventana=ventana_hija.ventana,
+                                      nombre="Email", color="#0078D7",
+                                      fuente='Verdana', tamano=6)
+            etiqueta_prefijo = Etiqueta(ventana=ventana_hija.ventana,
+                                        nombre="Prefijo", color="#0078D7",
+                                        fuente='Verdana', tamano=6)
+            etiqueta_valor = Etiqueta(ventana=ventana_hija.ventana,
+                                      nombre="Telefono (Sin prefijo)", color="#0078D7",
+                                      fuente='Verdana', tamano=6)
 
             caja_nombres = CajaTexto(
                 ventana=ventana_hija.ventana, variable=nombres)
@@ -259,6 +271,12 @@ class VistaTkinter:
             caja_direccion = CajaTexto(
                 ventana=ventana_hija.ventana, variable=direccion)
             caja_ruc = CajaTexto(ventana=ventana_hija.ventana, variable=ruc)
+            caja_email = CajaTexto(
+                ventana=ventana_hija.ventana, variable=email)
+            caja_prefijo = CajaTexto(
+                ventana=ventana_hija.ventana, variable=prefijo)
+            caja_valor = CajaTexto(
+                ventana=ventana_hija.ventana, variable=telefono)
 
             etiqueta_nombres.invocar_pack()
             caja_nombres.invocar_pack()
@@ -271,6 +289,15 @@ class VistaTkinter:
             VistaTkinter.agregar_espaciado(ventana_hija)
             etiqueta_ruc.invocar_pack()
             caja_ruc.invocar_pack()
+            VistaTkinter.agregar_espaciado(ventana_hija)
+            etiqueta_email.invocar_pack()
+            caja_email.invocar_pack()
+            VistaTkinter.agregar_espaciado(ventana_hija)
+            etiqueta_prefijo.invocar_pack()
+            caja_prefijo.invocar_pack()
+            VistaTkinter.agregar_espaciado(ventana_hija)
+            etiqueta_valor.invocar_pack()
+            caja_valor.invocar_pack()
 
             boton_salir = Boton(ventana=ventana_hija.ventana,
                                 nombre="Volver", color="white",
@@ -282,7 +309,7 @@ class VistaTkinter:
                                     nombre="Siguiente", color="white",
                                     evento=lambda: seleccionar_metodo_pago() or
                                     establecer_cliente(cedula, nombres.get(
-                                    ), apellidos.get(), direccion.get(), ruc.get())
+                                    ), apellidos.get(), direccion.get(), ruc.get(), Email(email), Telefono(prefijo, telefono))
                                     or ventana_hija.salir())
 
             boton_siguiente.invocar_pack("derecha")
@@ -304,7 +331,7 @@ class VistaTkinter:
                                           nombre="Efectivo", color="black",
                                           evento=(lambda: establecer_metodo_pago(
                                               Controlador.obtener_metodo_pago_efectivo))
-                                          or ventana_hija.ventana.salir())
+                                          or ventana_hija.salir())
             boton_opcion_tarjeta = Boton(ventana=ventana_hija.ventana,
                                          nombre="Tarjeta", color="black",
                                          evento=lambda: establecer_metodo_pago(
@@ -320,11 +347,15 @@ class VistaTkinter:
         def establecer_metodo_pago(metodo_pago):
             nonlocal medio_pago
             medio_pago = metodo_pago
-            realizar_cobro()
+            try:
+                realizar_cobro()
+            except Exception as e:
+                VistaTkinter.error('Error de entrada', str(e))
 
-        def establecer_cliente(cedula, nombre, apellido, direccion, ruc):
+        def establecer_cliente(cedula, nombre, apellido, direccion, ruc, email, telefono):
             nonlocal cliente
-            persona = Persona(Email(''), cedula, nombre,
+            contactos = [email, telefono]
+            persona = Persona(contactos, cedula, nombre,
                               apellido, direccion, ruc)
             cliente = Cliente(persona)
             print('cliente: ' + str(cliente))
@@ -333,6 +364,8 @@ class VistaTkinter:
             nonlocal orden, medio_pago, cliente
             comprobante = Controlador.crear_comprobante(
                 orden, medio_pago, cliente)
+            if not (cliente):
+                raise Exception("Debe introducir un cliente valido.")
             cliente.facturas.append(comprobante)
             orden.estado = utiles.ESTADO_PAGADO
             Controlador.guardar_comprobante(comprobante)
