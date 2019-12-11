@@ -19,6 +19,7 @@ class VistaTkinter:
     ''' Clase que representa la vista de la aplicacion mediante una interfaz grafica '''
     @staticmethod
     def realizar_pedido(ventana_raiz):
+        ''' Metodo para visualizar una ventana que permite registrar pedidos en el sistema '''
         articulos_seleccionados = []
         ventana_hija = VTopLevel(ventana_raiz.ventana, 'Realizar Pedido')
         ventana_hija.ventana.geometry("350x300+500+222")
@@ -96,6 +97,7 @@ class VistaTkinter:
 
     @staticmethod
     def realizar_cobro(ventana_raiz):
+        ''' Metodo para visualizar una ventana que permite realizar pago de pedidos en el sistema '''
         orden = None
         cliente = None
         medio_pago = None
@@ -372,6 +374,7 @@ class VistaTkinter:
 
     @staticmethod
     def desplegar_articulos(ventana_raiz):
+        ''' Metodo para visualizar una ventana que permite visualizar articulos del sistema '''
         articulos_categorizados = Controlador.filtrar_articulos()
         articulos_higiene = articulos_categorizados[utiles.KEY_HIGIENE]
 
@@ -417,6 +420,7 @@ class VistaTkinter:
 
     @staticmethod
     def obtener_informes(ventana_raiz):
+        ''' Metodo para visualizar una ventana que permite obtener informes en el sistema '''
         ventana_hija = VTopLevel(ventana_raiz.ventana,
                                  'Generacion de informes')
         ventana_hija.ventana.geometry("450x260+500+200")
@@ -600,7 +604,7 @@ class VistaTkinter:
 
     @staticmethod
     def cerrar_aplicacion(ventana_raiz):
-        ''' Metodo para salir de la aplicación '''
+        ''' Metodo para salir de la aplicación principal'''
         ventana_raiz.ventana.withdraw()
         ventana1 = VTopLevel(ventana_raiz.ventana, 'Salir del Sistema')
         ventana1.ventana.geometry("280x93+500+200")

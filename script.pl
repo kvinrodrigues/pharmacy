@@ -68,11 +68,14 @@ cobrable(Numero_pedido) :-
 % ---------- Se verifica si un pedido se encuentra pagado ----------
 pagado(Numero_pedido) :-
     estado(Numero_pedido, pagado).
-% ---------- Se verifica si un pedido se encuentra pendiente ----------
+% ---------- Se verifica si un pedido se encuentra pendiente, se le debe pasar un numero de pedido ----------  
+% definido en numero_pedido_con_articulo 
 pendiente(Numero_pedido) :-
     estado(Numero_pedido, pendiente).
 
-vender_articulo(X,Y) :-
+% ---------- Para calcular precio total, proveyendo un lista de articulos  ----------
+% ---------- Ejemplo precio_total([shampu], Y) ----------
+precio_total(X,Y) :-
     vender(X,0.0,Y).
 
 vender([],Y,Y).
