@@ -211,10 +211,10 @@ class Orden(Documento):
         self.estado = utiles.ESTADO_PENDIENTE
 
     def __str__(self):
-        mensaje = '\tNumero de orden: ' + str(self.numero_orden) + '\n'
-        mensaje += '\tArticulos: \n'
+        mensaje = 'Numero de orden: ' + str(self.numero_orden) + '\n'
+        mensaje += '\n'
         for articulo in self.articulos:
-            mensaje += '\t\t' + str(articulo) + '\t' + str(articulo.precio_unitario) + '\n'
+            mensaje +=  str(articulo) + '\t' + str(articulo.precio_unitario) + '\n'
         return mensaje
 
 
@@ -262,11 +262,10 @@ class Factura(Comprobante):
     def __str__(self):
         orden = self.orden
         monto_total = 0
-        mensaje = 'Factura: \n\t\tNumero de orden: {}'.format(
+        mensaje = 'Factura: \nNumero de orden: {}'.format(
             orden.numero_orden)
-        mensaje += '\n\t\t Articulos: '
         for articulo in orden.articulos:
-            mensaje += '\n\t\t\t' + str(articulo)
+            mensaje += '\n' + str(articulo)
             monto_total += articulo.precio_unitario
-        mensaje += "\n\t\tMonto total: " + str(monto_total)
+        mensaje += "\nMonto total: " + str(monto_total)
         return mensaje

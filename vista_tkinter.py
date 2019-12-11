@@ -24,10 +24,10 @@ class VistaTkinter:
         ventana_hija.ventana.geometry("350x300+500+222")
         ventana_hija.ventana.configure(background='white')
         etiqueta_titulo = Etiqueta(ventana=ventana_hija.ventana,
-                                   nombre="Realizar Pedido", color="#0078D7",
+                                   nombre="Realizar Pedido", color="#3b5998",
                                    fuente='Verdana', tamano=16)
         etiqueta_seleccion = Etiqueta(ventana=ventana_hija.ventana,
-                                      nombre="Categoria: ", color="#0078D7",
+                                      nombre="Categoria: ", color="#3b5998",
                                       fuente='Verdana', tamano=10)
         etiqueta_titulo.invocar_pack()
         etiqueta_seleccion.invocar_pack()
@@ -49,7 +49,7 @@ class VistaTkinter:
         etiqueta_categoria = Etiqueta(ventana=ventana_hija.ventana,
                                       nombre=Controlador.obtener_nombre_categoria(
                                           int(indice_categoria.get())).upper(),
-                                      color="#0078D7",
+                                      color="#3b5998",
                                       fuente='Verdana', tamano=16)
         boton_seleccion = Boton(ventana=ventana_hija.ventana,
                                 nombre="Lo quiero!", color="white",
@@ -103,7 +103,7 @@ class VistaTkinter:
         ventana_hija.ventana.geometry("384x162+500+200")
         ventana_hija.ventana.configure(background='white')
         etiqueta_titulo = Etiqueta(ventana=ventana_hija.ventana,
-                                   nombre="Cobro de Pedido\n", color="#0078D7",
+                                   nombre="Cobro de Pedido\n", color="#3b5998",
                                    fuente='Verdana', tamano=16)
         etiqueta_titulo.invocar_pack()
 
@@ -230,7 +230,7 @@ class VistaTkinter:
             ventana_hija.ventana.configure(background='white')
 
             etiqueta_titulo = Etiqueta(ventana=ventana_hija.ventana,
-                                       nombre="Registrar cliente", color="#0078D7",
+                                       nombre="Registrar cliente", color="#3b5998",
                                        fuente='Verdana', tamano=16)
             etiqueta_titulo.invocar_pack()
 
@@ -243,25 +243,25 @@ class VistaTkinter:
             telefono = StringVar(ventana_hija.ventana)
 
             etiqueta_nombres = Etiqueta(ventana=ventana_hija.ventana,
-                                        nombre="Nombres: ", color="#0078D7",
+                                        nombre="Nombres: ", color="#3b5998",
                                         fuente='Verdana', tamano=8)
             etiqueta_apellidos = Etiqueta(ventana=ventana_hija.ventana,
-                                          nombre="Apellidos", color="#0078D7",
+                                          nombre="Apellidos", color="#3b5998",
                                           fuente='Verdana', tamano=8)
             etiqueta_direccion = Etiqueta(ventana=ventana_hija.ventana,
-                                          nombre="Direccion", color="#0078D7",
+                                          nombre="Direccion", color="#3b5998",
                                           fuente='Verdana', tamano=8)
             etiqueta_ruc = Etiqueta(ventana=ventana_hija.ventana,
-                                    nombre="Ruc", color="#0078D7",
+                                    nombre="Ruc", color="#3b5998",
                                     fuente='Verdana', tamano=8)
             etiqueta_email = Etiqueta(ventana=ventana_hija.ventana,
-                                      nombre="Email", color="#0078D7",
+                                      nombre="Email", color="#3b5998",
                                       fuente='Verdana', tamano=6)
             etiqueta_prefijo = Etiqueta(ventana=ventana_hija.ventana,
-                                        nombre="Prefijo", color="#0078D7",
+                                        nombre="Prefijo", color="#3b5998",
                                         fuente='Verdana', tamano=6)
             etiqueta_valor = Etiqueta(ventana=ventana_hija.ventana,
-                                      nombre="Telefono (Sin prefijo)", color="#0078D7",
+                                      nombre="Telefono (Sin prefijo)", color="#3b5998",
                                       fuente='Verdana', tamano=6)
 
             caja_nombres = CajaTexto(
@@ -314,7 +314,6 @@ class VistaTkinter:
 
             boton_siguiente.invocar_pack("derecha")
             boton_siguiente.boton.configure(background="#1ED760", width=9)
-            seleccionar_metodo_pago()
 
         def seleccionar_metodo_pago():
             ventana_hija = VTopLevel(
@@ -323,15 +322,15 @@ class VistaTkinter:
             ventana_hija.ventana.configure(background="white")
 
             etiqueta2 = Etiqueta(ventana=ventana_hija.ventana,
-                                 nombre="Seleccione metodo de pago", color="#0078D7",
+                                 nombre="Seleccione metodo de pago", color="#3b5998",
                                  fuente='Verdana', tamano=16)
             etiqueta2.invocar_pack()
 
             boton_opcion_efectivo = Boton(ventana=ventana_hija.ventana,
-                                          nombre="Efectivo", color="black",
-                                          evento=(lambda: establecer_metodo_pago(
-                                              Controlador.obtener_metodo_pago_efectivo))
-                                          or ventana_hija.salir())
+                                         nombre="Efectivo", color="black",
+                                         evento=lambda: establecer_metodo_pago(
+                                             Controlador.obtener_metodo_pago_efectivo)
+                                         or ventana_hija.salir())
             boton_opcion_tarjeta = Boton(ventana=ventana_hija.ventana,
                                          nombre="Tarjeta", color="black",
                                          evento=lambda: establecer_metodo_pago(
@@ -400,7 +399,7 @@ class VistaTkinter:
         ventana1.ventana.configure(background='white')
 
         etiqueta1 = Etiqueta(ventana=ventana1.ventana,
-                             nombre="Articulos Disponibles", color="#0078D7",
+                             nombre="Articulos Disponibles", color="#3b5998",
                              fuente='Verdana', tamano=16)
         etiqueta1.invocar_pack()
 
@@ -424,7 +423,7 @@ class VistaTkinter:
         ventana_hija.ventana.configure(background='white')
 
         etiqueta_titulo = Etiqueta(ventana=ventana_hija.ventana,
-                                   nombre="Informe de ganancias", color="#0078D7",
+                                   nombre="Informe de ganancias", color="#3b5998",
                                    fuente='Verdana', tamano=16)
         etiqueta_titulo.invocar_pack()
 
@@ -434,16 +433,16 @@ class VistaTkinter:
         dia = StringVar(ventana_hija.ventana)
 
         etiqueta_anio = Etiqueta(ventana=ventana_hija.ventana,
-                                 nombre="Anio: ", color="#0078D7",
+                                 nombre="Anio: ", color="#3b5998",
                                  fuente='Verdana', tamano=8)
         etiqueta_mes = Etiqueta(ventana=ventana_hija.ventana,
-                                nombre="Mes", color="#0078D7",
+                                nombre="Mes", color="#3b5998",
                                 fuente='Verdana', tamano=8)
         etiqueta_semana = Etiqueta(ventana=ventana_hija.ventana,
-                                   nombre="Semana", color="#0078D7",
+                                   nombre="Semana", color="#3b5998",
                                    fuente='Verdana', tamano=8)
         etiqueta_dia = Etiqueta(ventana=ventana_hija.ventana,
-                                nombre="Dia", color="#0078D7",
+                                nombre="Dia", color="#3b5998",
                                 fuente='Verdana', tamano=8)
 
         caja_anio = CajaTexto(ventana=ventana_hija.ventana, variable=anio)
@@ -513,7 +512,7 @@ class VistaTkinter:
         ventana_hija.ventana.configure(background='white')
 
         etiqueta_titulo = Etiqueta(ventana=ventana_hija.ventana,
-                                   nombre="Informe", color="#0078D7",
+                                   nombre="Informe", color="#3b5998",
                                    fuente='Verdana', tamano=16)
         etiqueta_titulo.invocar_pack()
 
@@ -550,7 +549,7 @@ class VistaTkinter:
         VistaTkinter.agregar_espaciado(ventana_raiz)
 
         etiqueta2 = Etiqueta(ventana=ventana_raiz.ventana,
-                             nombre="Menú Principal", color="#0078D7",
+                             nombre="Menú Principal", color="#3b5998",
                              fuente='Verdana', tamano=16)
         etiqueta2.invocar_pack()
 
