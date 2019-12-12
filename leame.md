@@ -59,5 +59,6 @@ Aplicacion para la realizacion de pedidos fisicos dentro de una farmacia
         Si se introduce anio, mes y dia el informe sera diario.
         Si se introduce anio, mes y semana el informe sera semanal.
 
+  Obs: Borrar archivos comprobantes.pickle, ordenes.pickle, clientes.pickle
 ## Autor
 * **Kevin Rodrigues** - *Desarrollo de la aplicacion* - [Poraplz](https://github.com/poraplz)       

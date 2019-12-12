@@ -80,7 +80,7 @@ precio_total(X,Y) :-
 
 vender([],Y,Y).
 
-vender([Head|Tail],Y0,Y) :-
-    precio_articulo(Head,Cost),
-    Y1 is Y0 + Cost,
-    vender(Tail,Y1,Y).
+vender([Padre|Hoja],Y0,Y) :-
+    precio_articulo(Padre,Costo),
+    Y1 is Y0 + Costo,
+    vender(Hoja,Y1,Y).
