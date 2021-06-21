@@ -61,4 +61,4 @@ Aplicacion para la realizacion de pedidos fisicos dentro de una farmacia
 
   Obs: Borrar archivos comprobantes.pickle, ordenes.pickle, clientes.pickle
 ## Autor
-* **Kevin Rodrigues** - *Desarrollo de la aplicacion* - [Poraplz](https://github.com/poraplz)       
+* **Kevin Rodrigues** - *Desarrollo de la aplicacion* - [Kevin Rodrigues](https://github.com/soykevinrodrigues)       
